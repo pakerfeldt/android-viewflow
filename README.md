@@ -1,6 +1,6 @@
 # View Flow for Android
 
-ViewFlow is a Android UI widget providing a horizontally [ViewGroup](http://developer.android.com/reference/android/view/ViewGroup.html) with items populated from an [Adapter](http://developer.android.com/reference/android/widget/Adapter.html).
+ViewFlow is a Android UI widget providing a horizontally [ViewGroup](http://developer.android.com/reference/android/view/ViewGroup.html) with items populated from an [Adapter](http://developer.android.com/reference/android/widget/Adapter.html). Scroll down to the bottom of the page for a screen shot.
 
 The component is an [Library Project](http://developer.android.com/guide/developing/eclipse-adt.html#libraryProject). This means that there's no need to copy-paste resources into your own project, simply add the action bar component as a reference to any project.
 
@@ -39,5 +39,7 @@ If you need to listen to screen change events you would want to implement your o
 Copyright (c) 2011 [Patrik Åkerfeldt](http://about.me/pakerfeldt)
 
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+
+![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/blob/master/viewflow-example/screen.png "ViewFlow for Android")
 
 
