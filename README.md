@@ -8,7 +8,7 @@ The component is an [Library Project](http://developer.android.com/guide/develop
 
 ### In your layout
 
-    <se.taptwo.android.widget.ViewFlow
+    <org.taptwo.android.widget.ViewFlow
 	    android:id="@+id/viewflow"
 	    app:sidebuffer="5"
         />
