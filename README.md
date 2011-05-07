@@ -40,6 +40,6 @@ Copyright (c) 2011 [Patrik Åkerfeldt](http://about.me/pakerfeldt)
 
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/blob/master/viewflow-example/screen.png "ViewFlow for Android")
+![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/raw/master/viewflow-example/screen.png "ViewFlow for Android")
 
 
