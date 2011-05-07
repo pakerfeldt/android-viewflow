@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.taptwo.android.widget.viewflow.R;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -31,16 +31,14 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 /**
  * A horizontally scrollable {@link ViewGroup} with items populated from an
  * {@link Adapter}. The ViewFlow uses a buffer to store loaded {@link View}s in.
  * The default size of the buffer is 3 elements on both sides of the currently
  * visible {@link View}, making up a total buffer size of 3 * 2 + 1 = 7. The
- * buffer size can be changed using the {@code sidebuffer}Êxml attribute.
+ * buffer size can be changed using the {@code sidebuffer} xml attribute.
  * 
  */
 public class ViewFlow extends AdapterView<Adapter> {
@@ -254,7 +252,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 	}
 
 	private void snapToScreen(int whichScreen) {
-		Log.d("viewswitcher", "CurrentScreen: " + mCurrentScreen + ", snapping to " + whichScreen);
 		mLastScrollDirection = whichScreen - mCurrentScreen;
 		if (!mScroller.isFinished())
 			return;
@@ -316,7 +313,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 	@Override
 	public void setAdapter(Adapter adapter) {
 		this.mAdapter = adapter;
-		Log.d("viewswitcher", "Adapter size: " + adapter.getCount());
 
 		if (mAdapter.getCount() == 0)
 			return;
@@ -331,7 +327,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 		setVisibleView(mCurrentBufferIndex, false);
 		if(mViewSwitchListener != null)
 			mViewSwitchListener.onSwitched(mLoadedViews.get(0));
-		logBuffer();
 	}
 
 	@Override
@@ -366,7 +361,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 		if(mViewSwitchListener != null) {
 			mViewSwitchListener.onSwitched(mLoadedViews.get(mCurrentBufferIndex));
 		}
-		logBuffer();
 	}
 
 	
@@ -413,14 +407,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 		}
 
-		Log.d("babbler", "AdapterIndex: " + mCurrentAdapterIndex + ", BufferIndex: " + mCurrentBufferIndex);
-		Log.d("viewswitcher", "Current index: " + mCurrentAdapterIndex);
 		requestLayout();
 		setVisibleView(mCurrentBufferIndex, true);
 		if (mViewSwitchListener != null)
 			mViewSwitchListener.onSwitched(mLoadedViews.get(mCurrentBufferIndex));
-		logBuffer();
-
 	}
 
 	private View setupChild(View child, boolean addToEnd, boolean recycle) {
@@ -439,22 +429,4 @@ public class ViewFlow extends AdapterView<Adapter> {
 		View view = mAdapter.getView(position, convertView, (convertView != null ? (ViewGroup) convertView.getParent() : this));
 		return setupChild(view, addToEnd, convertView != null);
 	}
-
-	private void logBuffer() {
-		int index = 0;
-		for (View view : mLoadedViews) {
-			LinearLayout ll = ((LinearLayout) view);
-			for (int i = 0; i < ll.getChildCount(); i++) {
-				View v = ll.getChildAt(i);
-				if (v instanceof TextView) {
-					Log.d("babbler", "Index " + index + " contains " + ((TextView) v).getText());
-					break;
-				}
-			}
-			index++;
-		}
-		Log.d("babbler", "X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
-		Log.d("babbler", "IndexInAdapter: " + mCurrentAdapterIndex + ", IndexInBuffer: " + mCurrentBufferIndex);
-	}
-
 }
