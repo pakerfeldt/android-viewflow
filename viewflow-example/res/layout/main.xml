@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/se.taptwo.android.widget.viewflow.example"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+
+	<LinearLayout android:id="@+id/header_layout"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal" android:layout_width="fill_parent" android:gravity="center_horizontal" android:background="@color/header">
+		<Button android:id="@+id/button00" android:text="0"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button01" android:text="1"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button02" android:text="2"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button03" android:text="3"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button04" android:text="4"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button05" android:text="5"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button06" android:text="6"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button07" android:text="7"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button08" android:text="8"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+		<Button android:id="@+id/button09" android:text="9"
+			android:onClick="setCurrentView" android:padding="0dp"
+			android:layout_height="40dp" android:layout_width="wrap_content"></Button>
+
+	</LinearLayout>
+	<org.taptwo.android.widget.ViewFlow
+		android:id="@+id/viewflow" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" app:sidebuffer="4"></org.taptwo.android.widget.ViewFlow>
+
+
+
+
+</LinearLayout>
