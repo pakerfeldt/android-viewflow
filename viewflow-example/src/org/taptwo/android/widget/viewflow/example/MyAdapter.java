@@ -15,7 +15,7 @@
  */
 package org.taptwo.android.widget.viewflow.example;
 
-import se.taptwo.android.widget.viewflow.example.R;
+import org.taptwo.android.widget.viewflow.example.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

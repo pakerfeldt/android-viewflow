@@ -18,7 +18,7 @@ package org.taptwo.android.widget;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import se.taptwo.android.widget.viewflow.R;
+import org.taptwo.android.widget.viewflow.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;

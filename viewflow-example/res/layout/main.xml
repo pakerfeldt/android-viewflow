@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res/se.taptwo.android.widget.viewflow.example"
+	xmlns:app="http://schemas.android.com/apk/res/org.taptwo.android.widget.viewflow.example"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
