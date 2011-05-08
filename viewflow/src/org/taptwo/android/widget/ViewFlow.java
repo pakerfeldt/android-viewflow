@@ -76,8 +76,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		
 		@Override
 		public void onGlobalLayout() {
-			setSelection(mCurrentAdapterIndex);
 			getViewTreeObserver().removeGlobalOnLayoutListener(orientationChangeListener);
+			setSelection(mCurrentAdapterIndex);
 		}
 	};
 
