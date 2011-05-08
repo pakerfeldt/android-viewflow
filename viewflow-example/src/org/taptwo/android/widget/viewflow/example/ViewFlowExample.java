@@ -17,7 +17,7 @@ package org.taptwo.android.widget.viewflow.example;
 
 import org.taptwo.android.widget.ViewFlow;
 import org.taptwo.android.widget.ViewFlow.ViewSwitchListener;
-import org.taptwo.android.widget.viewflow.example.R;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;

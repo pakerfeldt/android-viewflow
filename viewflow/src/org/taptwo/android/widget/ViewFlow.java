@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import org.taptwo.android.widget.viewflow.R;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
@@ -30,6 +31,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -69,6 +71,15 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private Adapter mAdapter;
 	private int mLastScrollDirection;
 	private AdapterDataSetObserver mDataSetObserver;
+	
+	private OnGlobalLayoutListener orientationChangeListener = new OnGlobalLayoutListener() {
+		
+		@Override
+		public void onGlobalLayout() {
+			setSelection(mCurrentAdapterIndex);
+			getViewTreeObserver().removeGlobalOnLayoutListener(orientationChangeListener);
+		}
+	};
 
 	/**
 	 * Receives call backs when a new {@link View} has been scrolled to.
@@ -112,6 +123,12 @@ public class ViewFlow extends AdapterView<Adapter> {
 				.get(getContext());
 		mTouchSlop = configuration.getScaledTouchSlop();
 		mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+	}
+
+	@Override
+	protected void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		getViewTreeObserver().addOnGlobalLayoutListener(orientationChangeListener);
 	}
 
 	@Override
@@ -214,10 +231,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 					final int availableToScroll = getChildAt(
 							getChildCount() - 1).getRight()
 							- scrollX - getWidth();
-					// Log.d("babbler", "getRight(): " +
-					// getChildAt(getChildCount() - 1).getRight() +
-					// ", scrollX: " + scrollX + ", getWidth(): " + getWidth() +
-					// ", Avail: " + availableToScroll);
 					if (availableToScroll > 0) {
 						scrollBy(Math.min(availableToScroll, deltaX), 0);
 					}
