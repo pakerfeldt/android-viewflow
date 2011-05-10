@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 public class MyAdapter extends BaseAdapter {
 
-	
 	private LayoutInflater mInflater;
 
 	public MyAdapter(Context context) {
@@ -52,7 +51,7 @@ public class MyAdapter extends BaseAdapter {
 		if(convertView == null) {
 			convertView = mInflater.inflate(R.layout.flow_item, null);
 		}
-		((TextView) convertView.findViewById(R.id.textLabel)).setText(""+position);
+		((TextView) convertView.findViewById(R.id.textLabel)).setText("P"+position);
 		return convertView;
 	}
 
