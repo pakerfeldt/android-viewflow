@@ -18,4 +18,9 @@
     <declare-styleable name="ViewFlow">
         <attr name="sidebuffer" format="integer" />
     </declare-styleable>
+    <declare-styleable name="CircleFlowIndicator">
+        <attr name="fillColor" format="color" />
+        <attr name="strokeColor" format="color" />
+        <attr name="radius" format="integer" />
+    </declare-styleable>    
 </resources>

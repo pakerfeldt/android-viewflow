@@ -15,21 +15,15 @@
  */
 package org.taptwo.android.widget.viewflow.example;
 
+import org.taptwo.android.widget.CircleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
-import org.taptwo.android.widget.ViewFlow.ViewSwitchListener;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class ViewFlowExample extends Activity {
 
 	private ViewFlow viewFlow;
-	private Button[] buttons;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -37,33 +31,9 @@ public class ViewFlowExample extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		LinearLayout header = (LinearLayout) findViewById(R.id.header_layout);
-		buttons = new Button[header.getChildCount()];
-		for (int i = 0; i < header.getChildCount(); i++) {
-			buttons[i] = (Button) header.getChildAt(i);
-		}
-
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
-		viewFlow.setOnViewSwitchListener(new ViewSwitchListener() {
-
-			@Override
-			public void onSwitched(View view) {
-				int position = Integer.parseInt(((TextView) view
-						.findViewById(R.id.textLabel)).getText().toString());
-				for(int i = 0; i < buttons.length; i++) {
-					if(i != position)
-						buttons[i].setTextColor(Color.BLACK);
-					else
-						buttons[i].setTextColor(Color.MAGENTA);
-				}
-			}
-		});
 		viewFlow.setAdapter(new MyAdapter(this));
-	}
-
-	public void setCurrentView(View v) {
-		Integer position = Integer
-				.parseInt(((TextView) v).getText().toString());
-		viewFlow.setSelection(position);
+		CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
+		viewFlow.setFlowIndicator(indic);
 	}
 }
