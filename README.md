@@ -31,8 +31,21 @@ If you need to listen to screen change events you would want to implement your o
         }
     });
 
+### Flow Indicator
+It is also possible to add a flow view indicator to your layout. The purpose of a `FlowIndicator` is to present a visual representation of where in the item list focus is at. You may either implement a `FlowIndicator` yourself or use an implementation provided by the View Flow library. Like so:
+
+	<org.taptwo.android.widget.CircleFlowIndicator
+		android:padding="10dip" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:id="@+id/viewflowindic"
+		android:background="#00000000"/>
+
+And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
+	CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
+	viewFlow.setFlowIndicator(indic);
+
 ## Contributions
 
+* Eric Taix
 * Marc Reichelt, <http://marcreichelt.blogspot.com/>
 
 ## License
