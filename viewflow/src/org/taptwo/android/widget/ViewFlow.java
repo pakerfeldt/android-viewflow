@@ -284,7 +284,13 @@ public class ViewFlow extends AdapterView<Adapter> {
 	protected void onScrollChanged(int h, int v, int oldh, int oldv) {
 		super.onScrollChanged(h, v, oldh, oldv);
 		if (mIndicator != null) {
-			mIndicator.onScrolled(h, v, oldh, oldv);
+			/*
+			 * The actual horizontal scroll origin does typically not match the perceived one.
+			 * Therefore, we need to calculate the perceived horizontal scroll origin here, since
+			 * we use a view buffer.
+			 */
+			int hPerceived = h + (mCurrentAdapterIndex - mCurrentBufferIndex) * getWidth();
+			mIndicator.onScrolled(hPerceived, v, oldh, oldv);
 		}
 	}
 

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<TextView android:id="@+id/textLabel" android:gravity="center_vertical|center_horizontal" android:text="0" android:layout_height="fill_parent" android:layout_width="fill_parent" android:textSize="300dp" android:textStyle="bold"></TextView>
+	<TextView android:id="@+id/textLabel" android:gravity="center_vertical|center_horizontal"
+		android:text="0" android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:textSize="250dp"
+		android:textStyle="bold"></TextView>
 </LinearLayout>
