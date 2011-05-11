@@ -40,6 +40,7 @@ It is also possible to add a flow view indicator to your layout. The purpose of 
 		android:background="#00000000"/>
 
 And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
+
 	CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
 	viewFlow.setFlowIndicator(indic);
 
