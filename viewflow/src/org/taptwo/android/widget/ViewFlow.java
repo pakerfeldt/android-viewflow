@@ -35,9 +35,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.Scroller;
-import android.widget.TextView;
 
 /**
  * A horizontally scrollable {@link ViewGroup} with items populated from an
@@ -187,12 +185,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		return onTouchEvent(ev);
-	}
-
-	@Override
-	public boolean onTouchEvent(MotionEvent ev) {
-
 		if (getChildCount() == 0)
 			return false;
 
@@ -283,8 +275,102 @@ public class ViewFlow extends AdapterView<Adapter> {
 		case MotionEvent.ACTION_CANCEL:
 			mTouchState = TOUCH_STATE_REST;
 		}
-
 		return false;
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent ev) {
+		if (getChildCount() == 0)
+			return false;
+
+		if (mVelocityTracker == null) {
+			mVelocityTracker = VelocityTracker.obtain();
+		}
+		mVelocityTracker.addMovement(ev);
+
+		final int action = ev.getAction();
+		final float x = ev.getX();
+
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			/*
+			 * If being flinged and user touches, stop the fling. isFinished
+			 * will be false if being flinged.
+			 */
+			if (!mScroller.isFinished()) {
+				mScroller.abortAnimation();
+			}
+
+			// Remember where the motion event started
+			mLastMotionX = x;
+
+			mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST
+					: TOUCH_STATE_SCROLLING;
+
+			break;
+
+		case MotionEvent.ACTION_MOVE:
+			final int xDiff = (int) Math.abs(x - mLastMotionX);
+
+			boolean xMoved = xDiff > mTouchSlop;
+
+			if (xMoved) {
+				// Scroll if the user moved far enough along the X axis
+				mTouchState = TOUCH_STATE_SCROLLING;
+			}
+
+			if (mTouchState == TOUCH_STATE_SCROLLING) {
+				// Scroll to follow the motion event
+				final int deltaX = (int) (mLastMotionX - x);
+				mLastMotionX = x;
+
+				final int scrollX = getScrollX();
+				if (deltaX < 0) {
+					if (scrollX > 0) {
+						scrollBy(Math.max(-scrollX, deltaX), 0);
+					}
+				} else if (deltaX > 0) {
+					final int availableToScroll = getChildAt(
+							getChildCount() - 1).getRight()
+							- scrollX - getWidth();
+					if (availableToScroll > 0) {
+						scrollBy(Math.min(availableToScroll, deltaX), 0);
+					}
+				}
+				return true;
+			}
+			break;
+
+		case MotionEvent.ACTION_UP:
+			if (mTouchState == TOUCH_STATE_SCROLLING) {
+				final VelocityTracker velocityTracker = mVelocityTracker;
+				velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+				int velocityX = (int) velocityTracker.getXVelocity();
+
+				if (velocityX > SNAP_VELOCITY && mCurrentScreen > 0) {
+					// Fling hard enough to move left
+					snapToScreen(mCurrentScreen - 1);
+				} else if (velocityX < -SNAP_VELOCITY
+						&& mCurrentScreen < getChildCount() - 1) {
+					// Fling hard enough to move right
+					snapToScreen(mCurrentScreen + 1);
+				} else {
+					snapToDestination();
+				}
+
+				if (mVelocityTracker != null) {
+					mVelocityTracker.recycle();
+					mVelocityTracker = null;
+				}
+			}
+
+			mTouchState = TOUCH_STATE_REST;
+
+			break;
+		case MotionEvent.ACTION_CANCEL:
+			mTouchState = TOUCH_STATE_REST;
+		}
+		return true;
 	}
 
 	@Override
@@ -574,22 +660,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 	}
 
 	private void logBuffer() {
-		int index = 0;
-		for (View view : mLoadedViews) {
-			if (view instanceof LinearLayout) {
-				LinearLayout ll = ((LinearLayout) view);
-				for (int i = 0; i < ll.getChildCount(); i++) {
-					View v = ll.getChildAt(i);
-					if (v instanceof TextView) {
-						Log.d("viewflow", "Index " + index + " contains "
-								+ ((TextView) v).getText());
-						break;
-					}
-				}
-			}
-			index++;
-		}
-		Log.d("viewflow",
+
+		Log.d("viewflow", "Size of mLoadedViews: " + mLoadedViews.size() +
 				"X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
 		Log.d("viewflow", "IndexInAdapter: " + mCurrentAdapterIndex
 				+ ", IndexInBuffer: " + mCurrentBufferIndex);
