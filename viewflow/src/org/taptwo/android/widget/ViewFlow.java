@@ -630,9 +630,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	}
 
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
-		View view = mAdapter.getView(position, convertView,
-				(convertView != null ? (ViewGroup) convertView.getParent()
-						: this));
+		View view = mAdapter.getView(position, convertView, this);
 		return setupChild(view, addToEnd, convertView != null);
 	}
 
