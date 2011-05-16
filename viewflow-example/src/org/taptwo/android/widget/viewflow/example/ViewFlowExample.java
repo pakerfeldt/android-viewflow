@@ -35,5 +35,6 @@ public class ViewFlowExample extends Activity {
 		viewFlow.setAdapter(new MyAdapter(this));
 		CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
 		viewFlow.setFlowIndicator(indic);
+		
 	}
 }
