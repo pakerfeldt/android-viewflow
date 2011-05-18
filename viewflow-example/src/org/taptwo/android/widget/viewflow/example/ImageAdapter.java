@@ -15,25 +15,26 @@
  */
 package org.taptwo.android.widget.viewflow.example;
 
-import org.taptwo.android.widget.viewflow.example.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.ImageView;
 
-public class MyAdapter extends BaseAdapter {
+public class ImageAdapter extends BaseAdapter {
 
 	private LayoutInflater mInflater;
+	private static final int[] ids = { R.drawable.cupcake, R.drawable.donut, R.drawable.eclair, R.drawable.froyo,
+			R.drawable.gingerbread, R.drawable.honeycomb, R.drawable.icecream };
 
-	public MyAdapter(Context context) {
+	public ImageAdapter(Context context) {
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-}
-	
+	}
+
 	@Override
 	public int getCount() {
-		return 10;
+		return ids.length;
 	}
 
 	@Override
@@ -43,15 +44,15 @@ public class MyAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return position; 
+		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		if(convertView == null) {
-			convertView = mInflater.inflate(R.layout.flow_item, null);
+		if (convertView == null) {
+			convertView = mInflater.inflate(R.layout.image_item, null);
 		}
-		((TextView) convertView.findViewById(R.id.textLabel)).setText(""+position+"");
+		((ImageView) convertView.findViewById(R.id.imgView)).setImageResource(ids[position]);
 		return convertView;
 	}
 

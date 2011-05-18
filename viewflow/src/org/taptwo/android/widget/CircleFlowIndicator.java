@@ -106,7 +106,6 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	@Override
 	public void onSwitched(View view, int position) {
-		invalidate();
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +114,6 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	@Override
 	public void setViewFlow(ViewFlow view) {
 		viewFlow = view;
-		viewFlow.setOnViewSwitchListener(this);
 		flowWidth = viewFlow.getWidth();
 		invalidate();
 	}
@@ -130,7 +128,6 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		currentScroll = h;
 		flowWidth = viewFlow.getWidth();
 		invalidate();
-
 	}
 
 	/*

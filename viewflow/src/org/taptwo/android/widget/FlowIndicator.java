@@ -6,10 +6,10 @@ package org.taptwo.android.widget;
 import org.taptwo.android.widget.ViewFlow.ViewSwitchListener;
 
 /**
- * An interface which defaines the contract between a ViewFlow and a
+ * An interface which defines the contract between a ViewFlow and a
  * FlowIndicator.<br/>
  * A FlowIndicator is responsible to show an visual indicator on the total views
- * number and the current visible views.<br/>
+ * number and the current visible view.<br/>
  * 
  * @author Eric Taix
  */
