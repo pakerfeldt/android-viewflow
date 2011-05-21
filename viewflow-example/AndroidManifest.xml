@@ -6,17 +6,10 @@
 		android:debuggable="true">
 		<activity android:label="@string/app_name"
 			android:configChanges="orientation" android:name=".CircleViewFlowExample">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
 		</activity>
 
 		<activity android:name="TitleViewFlowExample" android:label="@string/app_name">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"></action>
-				<category android:name="android.intent.category.LAUNCHER"></category>
-			</intent-filter>
+
 		</activity>
 		
 		<activity android:name="ViewFlowExample" android:label="@string/app_name">
