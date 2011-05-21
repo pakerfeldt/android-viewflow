@@ -5,9 +5,8 @@
 	android:scrollbarAlwaysDrawVerticalTrack="true">
 	<ScrollView android:id="@+id/ScrollView01"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
-	<TextView android:id="@+id/textLabel" android:gravity="center_vertical|center_horizontal"
-		android:text="0" android:layout_width="fill_parent" android:textStyle="bold"
-		android:layout_height="wrap_content" android:textSize="150dp"></TextView>
+	
 		
-		</ScrollView>
+		<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/imgView" android:src="@drawable/android" android:layout_gravity="center_vertical|center_horizontal"></ImageView>
+</ScrollView>
 </LinearLayout>

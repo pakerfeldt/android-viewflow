@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik Åkerfeldt
+ * Copyright (C) 2011 Tap2 AB <http://taptwo.se>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.taptwo.android.widget.viewflow.example;
 
+import org.taptwo.android.widget.TitleProvider;
 import org.taptwo.android.widget.viewflow.example.R;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -23,17 +24,20 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class MyAdapter extends BaseAdapter {
+public class AndroidVersionAdapter extends BaseAdapter implements TitleProvider {
 
 	private LayoutInflater mInflater;
 
-	public MyAdapter(Context context) {
+	private static final String[] versions = {"1.5","1.6","2.1","2.2","2.3","3.0","x.y" };
+	private static final String[] names = {"Cupcake","Donut","Eclair","Froyo","Gingerbread","Honeycomb","IceCream Sandwich" };
+	
+	public AndroidVersionAdapter(Context context) {
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 }
 	
 	@Override
 	public int getCount() {
-		return 10;
+		return names.length;
 	}
 
 	@Override
@@ -51,8 +55,16 @@ public class MyAdapter extends BaseAdapter {
 		if(convertView == null) {
 			convertView = mInflater.inflate(R.layout.flow_item, null);
 		}
-		((TextView) convertView.findViewById(R.id.textLabel)).setText(""+position+"");
+		((TextView) convertView.findViewById(R.id.textLabel)).setText(versions[position]);
 		return convertView;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.taptwo.android.widget.TitleProvider#getTitle(int)
+	 */
+	@Override
+	public String getTitle(int position) {
+		return names[position];
 	}
 
 }
