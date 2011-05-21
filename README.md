@@ -32,7 +32,10 @@ If you need to listen to screen change events you would want to implement your o
     });
 
 ### Flow Indicator
-It is also possible to add a flow view indicator to your layout. The purpose of a `FlowIndicator` is to present a visual representation of where in the item list focus is at. You may either implement a `FlowIndicator` yourself or use an implementation provided by the View Flow library. Like so:
+It is also possible to add a flow view indicator to your layout. The purpose of a `FlowIndicator` is to present a visual representation of where in the item list focus is at. You may either implement a `FlowIndicator` yourself or use an implementation provided by the View Flow library. The View Flow library currently supports the following indicators:
+
+#### Circle Flow Indicator ####
+This indicator shows a circle for each `View` in the adapter with a filled circle for the currently selected view (see screenshot below).
 
 	<org.taptwo.android.widget.CircleFlowIndicator
 		android:padding="10dip" android:layout_height="wrap_content"
@@ -44,7 +47,23 @@ And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
 	CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
 	viewFlow.setFlowIndicator(indic);
 
+#### Title Flow Indicator ####
+This indicator presents the title of the previous, current and next `View` in the adapter (see screenshot below).
+
+		<org.taptwo.android.widget.TitleFlowIndicator
+			android:id="@+id/viewflowindic" android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			app:footerLineHeight="2"
+			app:footerTriangleHeight="10" app:textColor="#FFFFFFFF" app:selectedColor="#FFFFC445" app:footerColor="#FFFFC445" app:titlePadding="10" app:textSize="13" 			android:layout_marginTop="10dip" />
+
+And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
+
+		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
+		indicator.setTitleProvider(myTitleProvider);
+		viewFlow.setFlowIndicator(indicator);
+
 ## Contributions
+The following persons deserves a mention for their contributions:
 
 * Eric Taix
 * Marc Reichelt, <http://marcreichelt.blogspot.com/>
@@ -54,6 +73,7 @@ Copyright (c) 2011 [Patrik Åkerfeldt](http://about.me/pakerfeldt)
 
 Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/raw/master/viewflow-example/screen.png "ViewFlow for Android")
+![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/raw/master/viewflow-example/screen.png "ViewFlow for Android") ![ViewFlow for Android](https://github.com/pakerfeldt/android-viewflow/raw/master/viewflow-example/screen2.png "ViewFlow for Android")
+
 
 
