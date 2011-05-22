@@ -70,6 +70,18 @@ The following persons deserves a mention for their contributions:
 * Eric Taix
 * Marc Reichelt, <http://marcreichelt.blogspot.com/>
 
+### Want to contribute?
+
+GitHub has some great articles on [how to get started with Git and GitHub](http://help.github.com/) and how to [fork a project](http://help.github.com/forking/).
+
+Contributers are recommended to fork the app on GitHub (but don't have too). Create a feature branch, push the branch to git hub, press Pull Request and write a simple explanation.
+
+One fix per commit. If say a a commit closes the open issue 12. Just add `closes #12` in your commit message to close that issue automagically.
+
+If you still feel uncomfortable contributing the project github-wise, don't hesistate to send a regular patch.
+
+All code that is contributed must be compliant with [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+
 ## License
 Copyright (c) 2011 [Patrik Åkerfeldt](http://about.me/pakerfeldt)
 
