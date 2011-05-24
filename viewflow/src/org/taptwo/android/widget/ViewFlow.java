@@ -92,7 +92,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		 * @param view
 		 *            the {@link View} currently in focus.
 		 * @param position
-		 *            The position of the switched view into the views list
+		 *            The position in the adapter of the {@link View} currently in focus.
 		 */
 		void onSwitched(View view, int position);
 
@@ -436,6 +436,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		int dx = (mCurrentScreen * getWidth()) - mScroller.getCurrX();
 		mScroller.startScroll(mScroller.getCurrX(), mScroller.getCurrY(), dx,
 				0, 0);
+		if(dx == 0)
+			onScrollChanged(mScroller.getCurrX() + dx, mScroller.getCurrY(), mScroller.getCurrX() + dx, mScroller.getCurrY());
 		if (uiThread)
 			invalidate();
 		else
@@ -504,6 +506,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	@Override
 	public void setSelection(int position) {
+		mNextScreen = INVALID_SCREEN;
+		mScroller.forceFinished(true);
 		if (mAdapter == null || position >= mAdapter.getCount())
 			return;
 
@@ -528,11 +532,11 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 		requestLayout();
 		setVisibleView(mCurrentBufferIndex, false);
+		if (mIndicator != null) {
+			mIndicator.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
+					mCurrentAdapterIndex);
+		}
 		if (mViewSwitchListener != null) {
-			if (mIndicator != null) {
-				mIndicator.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
-						mCurrentAdapterIndex);
-			}
 			mViewSwitchListener
 					.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
 							mCurrentAdapterIndex);
