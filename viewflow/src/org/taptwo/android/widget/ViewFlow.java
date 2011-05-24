@@ -92,7 +92,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		 * @param view
 		 *            the {@link View} currently in focus.
 		 * @param position
-		 *            The position of the switched view into the views list
+		 *            The position in the adapter of the {@link View} currently in focus.
 		 */
 		void onSwitched(View view, int position);
 

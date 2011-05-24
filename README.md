@@ -26,7 +26,7 @@ To be able to use the more convenient `app:title` the application namespace must
 If you need to listen to screen change events you would want to implement your own `ViewFlow.ViewSwitchListener` and pass it to the `setOnViewSwitchListener()` method.
 
     viewFlow.setOnViewSwitchListener(new ViewSwitchListener() {
-        public void onSwitched(View v) {
+        public void onSwitched(View v, int position) {
             // Your code here
         }
     });
