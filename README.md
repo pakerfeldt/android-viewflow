@@ -76,7 +76,7 @@ GitHub has some great articles on [how to get started with Git and GitHub](http:
 
 Contributers are recommended to fork the app on GitHub (but don't have too). Create a feature branch, push the branch to git hub, press Pull Request and write a simple explanation.
 
-One fix per commit. If say a a commit closes the open issue 12. Just add `closes #12` in your commit message to close that issue automagically.
+One fix per commit. If let's say a commit closes the open issue 12. Just add `closes #12` in your commit message to close that issue automagically.
 
 If you still feel uncomfortable contributing the project github-wise, don't hesistate to send a regular patch.
 
