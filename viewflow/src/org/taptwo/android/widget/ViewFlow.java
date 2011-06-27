@@ -162,7 +162,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 
 		if (mFirstLayout) {
-			scrollTo(mCurrentScreen * width, 0);
+			mScroller.startScroll(0, 0, mCurrentScreen * width, 0, 0);
 			mFirstLayout = false;
 		}
 	}
