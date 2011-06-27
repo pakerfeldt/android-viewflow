@@ -487,10 +487,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		if (mViewSwitchListener != null)
 			mViewSwitchListener.onSwitched(mLoadedViews.get(0), 0);
 	}
-
+	  
 	@Override
 	public View getSelectedView() {
-		return (mCurrentAdapterIndex < mLoadedViews.size() ? mLoadedViews
+		return (mCurrentBufferIndex < mLoadedViews.size() ? mLoadedViews
 				.get(mCurrentBufferIndex) : null);
 	}
 
