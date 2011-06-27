@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik Åkerfeldt
+ * Copyright (C) 2011 Patrik √Ökerfeldt
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,16 +141,16 @@ public class ViewFlow extends AdapterView<Adapter> {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
+		
 		final int width = MeasureSpec.getSize(widthMeasureSpec);
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		if (widthMode != MeasureSpec.EXACTLY) {
+		if (widthMode != MeasureSpec.EXACTLY && !isInEditMode()) {
 			throw new IllegalStateException(
 					"ViewFlow can only be used in EXACTLY mode.");
 		}
 
 		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		if (heightMode != MeasureSpec.EXACTLY) {
+		if (heightMode != MeasureSpec.EXACTLY && !isInEditMode()) {
 			throw new IllegalStateException(
 					"ViewFlow can only be used in EXACTLY mode.");
 		}
