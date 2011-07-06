@@ -64,6 +64,9 @@ And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
 		indicator.setTitleProvider(myTitleProvider);
 		viewFlow.setFlowIndicator(indicator);
 
+## Building a jar file
+If you rather want a jar file instead of a including the project as an android library, run `ant jar` in the `android-viewflow/viewflow` folder, to build a jar file.
+
 ## Contributions
 The following persons deserves a mention for their contributions:
 
