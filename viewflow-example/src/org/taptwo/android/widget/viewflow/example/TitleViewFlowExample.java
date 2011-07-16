@@ -19,6 +19,7 @@ import org.taptwo.android.widget.TitleFlowIndicator;
 import org.taptwo.android.widget.ViewFlow;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 public class TitleViewFlowExample extends Activity {
@@ -40,4 +41,12 @@ public class TitleViewFlowExample extends Activity {
 		viewFlow.setFlowIndicator(indicator);
 		
 	}
+	
+	/* If your min SDK version is < 8 you need to trigger the onConfigurationChanged in ViewFlow manually, like this */	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		viewFlow.onConfigurationChanged(newConfig);
+	}
+
 }

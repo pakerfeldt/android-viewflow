@@ -70,6 +70,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private int mLastScrollDirection;
 	private AdapterDataSetObserver mDataSetObserver;
 	private FlowIndicator mIndicator;
+	private int mLastOrientation = -1;
 
 	private OnGlobalLayoutListener orientationChangeListener = new OnGlobalLayoutListener() {
 
@@ -127,11 +128,11 @@ public class ViewFlow extends AdapterView<Adapter> {
 		mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 	}
 
-	@Override
-	protected void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		getViewTreeObserver().addOnGlobalLayoutListener(
-				orientationChangeListener);
+	public void onConfigurationChanged(Configuration newConfig) {
+		if (newConfig.orientation != mLastOrientation) {
+			mLastOrientation = newConfig.orientation;
+			getViewTreeObserver().addOnGlobalLayoutListener(orientationChangeListener);
+		}
 	}
 
 	public int getViewsCount() {
@@ -623,7 +624,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 				.getLayoutParams();
 		if (p == null) {
 			p = new AbsListView.LayoutParams(
-					ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT, 0);
 		}
 		if (recycle)
