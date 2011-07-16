@@ -68,7 +68,7 @@ And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
 If you rather want a jar file instead of a including the project as an android library, run `ant jar` in the `android-viewflow/viewflow` folder, to build a jar file.
 
 ## Caveats ##
-The manifest states a min sdk version of 4, which is true. But in any case you want to support an api level < 8 you will have to forward an onConfigurationChanged event to the `ViewFlow` from your `Activity`. I know this isn't a very nice solution, feel free to propose better ones!
+The manifest states a min sdk version of 4, which is true. But in any case you want to support an api level < 8 you will have to forward an `onConfigurationChanged` event to the `ViewFlow` from your `Activity`. I know this isn't a very nice solution, feel free to propose better ones!
 
 		@Override
 		public void onConfigurationChanged(Configuration newConfig) {
