@@ -69,11 +69,12 @@ If you rather want a jar file instead of a including the project as an android l
 
 ## Caveats ##
 The manifest states a min sdk version of 4, which is true. But in any case you want to support an api level < 8 you will have to forward an onConfigurationChanged event to the `ViewFlow` from your `Activity`. I know this isn't a very nice solution, feel free to propose better ones!
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		viewFlow.onConfigurationChanged(newConfig);
-	}
+
+		@Override
+		public void onConfigurationChanged(Configuration newConfig) {
+			super.onConfigurationChanged(newConfig);
+			viewFlow.onConfigurationChanged(newConfig);
+		}
 
 ## Contributions
 The following persons deserves a mention for their contributions:
