@@ -22,10 +22,12 @@
         <attr name="fillColor" format="color" />
         <attr name="strokeColor" format="color" />
         <attr name="radius" format="integer" />
+		<attr name="centered" format="boolean" />
     </declare-styleable>    
     <declare-styleable name="TitleFlowIndicator">
         <attr name="titlePadding" format="integer" />
         <attr name="selectedColor" format="color" />
+        <attr name="selectedBold" format="boolean" />
         <attr name="textColor" format="color" />
         <attr name="textSize" format="float" />
         <attr name="footerLineHeight" format="integer" />

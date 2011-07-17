@@ -40,6 +40,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 
 	private static final int TITLE_PADDING = 10;
 	private static final int SELECTED_COLOR = 0xFFFFC445;
+	private static final boolean SELECTED_BOLD = false;
 	private static final int TEXT_COLOR = 0xFFAAAAAA;
 	private static final int TEXT_SIZE = 15;
 	private static final int FOOTER_LINE_HEIGHT = 4;
@@ -63,7 +64,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 */
 	public TitleFlowIndicator(Context context) {
 		super(context);
-		initDraw(TEXT_COLOR, TEXT_SIZE, SELECTED_COLOR, FOOTER_LINE_HEIGHT, FOOTER_COLOR);
+		initDraw(TEXT_COLOR, TEXT_SIZE, SELECTED_COLOR, SELECTED_BOLD, FOOTER_LINE_HEIGHT, FOOTER_COLOR);
 	}
 
 	/**
@@ -81,16 +82,17 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		footerLineHeight = a.getInt(R.styleable.TitleFlowIndicator_footerLineHeight, FOOTER_LINE_HEIGHT);
 		footerTriangleHeight = a.getInt(R.styleable.TitleFlowIndicator_footerTriangleHeight, FOOTER_TRIANGLE_HEIGHT);
 		int selectedColor = a.getColor(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_COLOR);
+		boolean selectedBold = a.getBoolean(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_BOLD);
 		int textColor = a.getColor(R.styleable.TitleFlowIndicator_textColor, TEXT_COLOR);
 		float textSize = a.getFloat(R.styleable.TitleFlowIndicator_textSize, TEXT_SIZE);
 		titlePadding = a.getInt(R.styleable.TitleFlowIndicator_titlePadding, TITLE_PADDING);
-		initDraw(textColor, textSize, selectedColor, footerLineHeight, footerColor);
+		initDraw(textColor, textSize, selectedColor, selectedBold, footerLineHeight, footerColor);
 	}
 
 	/**
 	 * Initialize draw objects
 	 */
-	private void initDraw(int textColor, float textSize, int selectedColor, int footerLineHeight, int footerColor) {
+	private void initDraw(int textColor, float textSize, int selectedColor, boolean selectedBold, int footerLineHeight, int footerColor) {
 		paintText = new Paint();
 		paintText.setColor(textColor);
 		paintText.setTextSize(textSize);
@@ -98,6 +100,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		paintSelected = new Paint();
 		paintSelected.setColor(selectedColor);
 		paintSelected.setTextSize(textSize);
+		paintSelected.setFakeBoldText(selectedBold);
 		paintSelected.setAntiAlias(true);
 		paintFooterLine = new Paint();
 		paintFooterLine.setStyle(Paint.Style.FILL_AND_STROKE);
