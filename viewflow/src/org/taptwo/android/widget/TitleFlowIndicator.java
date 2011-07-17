@@ -102,7 +102,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		paintFooterLine = new Paint();
 		paintFooterLine.setStyle(Paint.Style.FILL_AND_STROKE);
 		paintFooterLine.setStrokeWidth(footerLineHeight);
-		paintFooterLine.setColor(FOOTER_COLOR);
+		paintFooterLine.setColor(footerColor);
 		paintFooterTriangle = new Paint();
 		paintFooterTriangle.setStyle(Paint.Style.FILL_AND_STROKE);
 		paintFooterTriangle.setColor(footerColor);
