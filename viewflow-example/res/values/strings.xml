@@ -4,4 +4,5 @@
     <string name="app_name">Viewflow examples</string>
     <string name="title_title">TitleFlowIndicator</string>
     <string name="circle_title">CircelFlowIndicator</string>
+    <string name="diff_title">DifferentViewFlow</string>
 </resources>
