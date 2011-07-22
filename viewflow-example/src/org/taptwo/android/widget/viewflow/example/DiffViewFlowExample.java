@@ -5,10 +5,8 @@ import org.taptwo.android.widget.ViewFlow;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class DiffViewFlowExample extends Activity {
 
