@@ -495,6 +495,11 @@ public class ViewFlow extends AdapterView<Adapter> {
 				.get(mCurrentBufferIndex) : null);
 	}
 
+    @Override
+    public int getSelectedItemPosition() {
+        return mCurrentAdapterIndex;
+    }
+
 	/**
 	 * Set the FlowIndicator
 	 * 
