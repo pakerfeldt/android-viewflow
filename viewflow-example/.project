@@ -32,6 +32,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>org_taptwo_android_widget_viewflow_src</name>
+			<type>2</type>
+			<locationURI>_android_org_taptwo_android_widget_viewflow_7cfa4d63/src</locationURI>
+		</link>
+		<link>
 			<name>viewflow_src</name>
 			<type>2</type>
 			<locationURI>_android_viewflow_474f6153/src</locationURI>
