@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik Åkerfeldt
+ * Copyright (C) 2011 Patrik ÔøΩkerfeldt
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class ViewFlowExample extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		listView = (ListView) findViewById(R.id.menu);
-		String[] listeStrings = { "Circle indicator...", "Title indicator..." };
+		String[] listeStrings = { "Circle indicator...", "Title indicator...", "Title indicator (clip Padding)..." };
 		listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listeStrings));
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -46,7 +46,10 @@ public class ViewFlowExample extends Activity {
 				case 1:
 					startActivity(new Intent(ViewFlowExample.this, TitleViewFlowExample.class));
 					break;
-				}
+			        case 2:
+				        startActivity(new Intent(ViewFlowExample.this, TitleViewFlowWithPaddingExample.class));
+				        break;
+			        }
 			}
 		});
 	}
