@@ -26,6 +26,7 @@
     </declare-styleable>    
     <declare-styleable name="TitleFlowIndicator">
         <attr name="titlePadding" format="integer" />
+        <attr name="clipPadding" format="integer" />
         <attr name="selectedColor" format="color" />
         <attr name="selectedBold" format="boolean" />
         <attr name="textColor" format="color" />
