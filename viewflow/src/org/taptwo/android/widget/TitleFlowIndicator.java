@@ -91,7 +91,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		int textColor = a.getColor(R.styleable.TitleFlowIndicator_textColor, TEXT_COLOR);
 		float textSize = a.getFloat(R.styleable.TitleFlowIndicator_textSize, TEXT_SIZE);
 		titlePadding = a.getInt(R.styleable.TitleFlowIndicator_titlePadding, TITLE_PADDING);
-		clipPadding = a.getColor(R.styleable.TitleFlowIndicator_clipPadding, CLIP_PADDING);
+		clipPadding = a.getInt(R.styleable.TitleFlowIndicator_clipPadding, CLIP_PADDING);
 		initDraw(textColor, textSize, selectedColor, selectedBold, footerLineHeight, footerColor);
 	}
 
