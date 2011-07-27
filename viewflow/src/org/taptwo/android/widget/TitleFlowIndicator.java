@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik Åkerfeldt
+ * Copyright (C) 2011 Patrik ÔøΩkerfeldt
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import android.widget.TextView;
 public class TitleFlowIndicator extends TextView implements FlowIndicator {
 
 	private static final int TITLE_PADDING = 10;
+	private static final int CLIP_PADDING = 0;
 	private static final int SELECTED_COLOR = 0xFFFFC445;
 	private static final boolean SELECTED_BOLD = false;
 	private static final int TEXT_COLOR = 0xFFAAAAAA;
@@ -57,6 +58,10 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	private Paint paintFooterTriangle;
 	private int footerTriangleHeight;
 	private int titlePadding;
+	/**
+	 * Left and right side padding for not active view titles.
+	 */
+	private int clipPadding;
 	private int footerLineHeight;
 
 	/**
@@ -86,6 +91,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		int textColor = a.getColor(R.styleable.TitleFlowIndicator_textColor, TEXT_COLOR);
 		float textSize = a.getFloat(R.styleable.TitleFlowIndicator_textSize, TEXT_SIZE);
 		titlePadding = a.getInt(R.styleable.TitleFlowIndicator_titlePadding, TITLE_PADDING);
+		clipPadding = a.getColor(R.styleable.TitleFlowIndicator_clipPadding, CLIP_PADDING);
 		initDraw(textColor, textSize, selectedColor, selectedBold, footerLineHeight, footerColor);
 	}
 
@@ -131,13 +137,11 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		int curViewWidth = curViewBound.right - curViewBound.left;
 		if (curViewBound.left < 0) {
 			// Try to clip to the screen (left side)
-			curViewBound.left = 0;
-			curViewBound.right = curViewWidth;
+			clipViewOnTheLeft(curViewBound, curViewWidth);
 		}
 		if (curViewBound.right > getLeft() + getWidth()) {
 			// Try to clip to the screen (right side)
-			curViewBound.right = getLeft() + getWidth();
-			curViewBound.left = curViewBound.right - curViewWidth;
+			clipViewOnTheRight(curViewBound, curViewWidth);
 		}
 		
 		// Left views starting from the current position
@@ -148,8 +152,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 				// Si left side is outside the screen
 				if (bound.left < 0) {
 					// Try to clip to the screen (left side)
-					bound.left = 0;
-					bound.right = w;
+					 clipViewOnTheLeft(bound, w);
 					// Except if there's an intersection with the right view
 					if (iLoop < count - 1 && currentPosition != iLoop) {
 						Rect rightBound = bounds.get(iLoop + 1);
@@ -169,8 +172,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 				// If right side is outside the screen
 				if (bound.right > getLeft() + getWidth()) {
 					// Try to clip to the screen (right side)
-					bound.right = getLeft() + getWidth();
-					bound.left = bound.right - w;
+					clipViewOnTheRight(bound, w);
 					// Except if there's an intersection with the left view
 					if (iLoop > 0 && currentPosition != iLoop) {
 						Rect leftBound = bounds.get(iLoop - 1);
@@ -214,6 +216,32 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
         path.close();
         canvas.drawPath(path, paintFooterTriangle);
 
+	}
+
+	/**
+	 * Set bounds for the right textView including clip padding.
+	 * 
+	 * @param curViewBound
+	 *            current bounds.
+	 * @param curViewWidth
+	 *            width of the view.
+	 */
+	private void clipViewOnTheRight(Rect curViewBound, int curViewWidth) {
+		curViewBound.right = getLeft() + getWidth() - clipPadding;
+		curViewBound.left = curViewBound.right - curViewWidth;
+	}
+
+	/**
+	 * Set bounds for the left textView including clip padding.
+	 * 
+	 * @param curViewBound
+	 *            current bounds.
+	 * @param curViewWidth
+	 *            width of the view.
+	 */
+	private void clipViewOnTheLeft(Rect curViewBound, int curViewWidth) {
+		curViewBound.left = 0 + clipPadding;
+		curViewBound.right = curViewWidth;
 	}
 
 	/**
