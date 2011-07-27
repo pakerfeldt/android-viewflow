@@ -55,7 +55,7 @@ This indicator presents the title of the previous, current and next `View` in th
 			android:layout_width="fill_parent"
 			app:footerLineHeight="2"
 			app:footerTriangleHeight="10" app:textColor="#FFFFFFFF" app:selectedColor="#FFFFC445"
-			app:footerColor="#FFFFC445" app:titlePadding="10" app:textSize="13" 
+			app:footerColor="#FFFFC445" app:titlePadding="10" app:textSize="13"	app:clipPadding="5"
 			android:layout_marginTop="10dip" />
 
 And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
