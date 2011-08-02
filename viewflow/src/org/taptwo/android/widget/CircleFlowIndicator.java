@@ -31,10 +31,10 @@ import android.view.View;
  * Availables attributes are:<br/>
  * <ul>fillColor: Define the color used to fill a circle (default to white)</ul>
  * <ul>strokeColor: Define the color used to stroke a circle (default to white)</ul>
- * <ul>radius: Define the circle radius (default to 4)</ul>
+ * <ul>radius: Define the circle radius (default to 4.0)</ul>
  */
 public class CircleFlowIndicator extends View implements FlowIndicator {
-	private int radius = 4;
+	private float radius = 4;
 	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint mPaintFill = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private ViewFlow viewFlow;
@@ -68,7 +68,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		int strokeColor = a.getColor(
 				R.styleable.CircleFlowIndicator_strokeColor, 0xFFFFFFFF);
 		// Retrieve the radius
-		radius = a.getInt(R.styleable.CircleFlowIndicator_radius, 4);
+		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
 		initColors(fillColor, strokeColor);
 	}
 
@@ -97,7 +97,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 					+ (iLoop * (2 * radius + radius)),
 					getPaddingTop() + radius, radius, mPaintStroke);
 		}
-		int cx = 0;
+		float cx = 0;
 		if (flowWidth != 0) {
 			// Draw the filled circle according to the current scroll
 			cx = (currentScroll * (2 * radius + radius)) / flowWidth;
@@ -174,8 +174,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 			if (viewFlow != null) {
 				count = viewFlow.getViewsCount();
 			}
-			result = getPaddingLeft() + getPaddingRight()
-					+ (count * 2 * radius) + (count - 1) * radius + 1;
+			result = (int)(getPaddingLeft() + getPaddingRight()
+					+ (count * 2 * radius) + (count - 1) * radius + 1);
 			// Respect AT_MOST value if that was what is called for by
 			// measureSpec
 			if (specMode == MeasureSpec.AT_MOST) {
@@ -203,7 +203,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		}
 		// Measure the height
 		else {
-			result = 2 * radius + getPaddingTop() + getPaddingBottom() + 1;
+			result = (int)(2 * radius + getPaddingTop() + getPaddingBottom() + 1);
 			// Respect AT_MOST value if that was what is called for by
 			// measureSpec
 			if (specMode == MeasureSpec.AT_MOST) {
