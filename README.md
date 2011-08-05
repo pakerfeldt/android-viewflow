@@ -20,6 +20,12 @@ To be able to use the more convenient `app:sidebuffer` attribute, the applicatio
 
     ViewFlow viewFlow = (ViewFlow) findViewById(R.id.viewflow);
     viewFlow.setAdapter(myAdapter);
+    
+Setting a different initial position (0 being default) is as easy as:
+
+    viewFlow.setAdapter(myAdapter, 8);
+    
+You could also use `setSelection(...)` immediately after calling `setAdapter(myAdapter)` but that might load unnecessary views giving you a decrease in performance.
 
 ### Listen on screen change events
 
