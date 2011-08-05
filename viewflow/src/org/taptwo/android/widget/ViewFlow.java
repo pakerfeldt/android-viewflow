@@ -474,7 +474,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 			mAdapter.registerDataSetObserver(mDataSetObserver);
 
 		}
-		if (mAdapter.getCount() == 0)
+		if (mAdapter == null || mAdapter.getCount() == 0)
 			return;
 
 		for (int i = 0; i < Math.min(mAdapter.getCount(), mSideBuffer + 1); i++) {
