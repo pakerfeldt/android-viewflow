@@ -25,7 +25,7 @@ Setting a different initial position (0 being default) is as easy as:
 
     viewFlow.setAdapter(myAdapter, 8);
     
-You could also use `setSelection(...)` immediately after calling `setAdapter(myAdapter)` but that might load unnecessary views giving you a decrease in performance.
+Although possible, you should not call `setSelection(...)` immediately after calling `setAdapter(myAdapter)` as that might load unnecessary views giving you a decrease in performance.
 
 ### Listen on screen change events
 
