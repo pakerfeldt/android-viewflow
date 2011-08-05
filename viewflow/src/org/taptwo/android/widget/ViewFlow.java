@@ -514,8 +514,11 @@ public class ViewFlow extends AdapterView<Adapter> {
 	public void setSelection(int position) {
 		mNextScreen = INVALID_SCREEN;
 		mScroller.forceFinished(true);
-		if (mAdapter == null || position >= mAdapter.getCount())
+		if (mAdapter == null)
 			return;
+		
+		position = Math.max(position, 0);
+		position =  Math.min(position, mAdapter.getCount()-1);
 
 		ArrayList<View> recycleViews = new ArrayList<View>();
 		View recycleView;
