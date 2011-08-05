@@ -35,7 +35,7 @@ public class TitleViewFlowExample extends Activity {
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
 		AndroidVersionAdapter adapter = new AndroidVersionAdapter(this);
-		viewFlow.setAdapter(adapter);
+		viewFlow.setAdapter(adapter, 3);
 		TitleFlowIndicator indicator = (TitleFlowIndicator) findViewById(R.id.viewflowindic);
 		indicator.setTitleProvider(adapter);
 		viewFlow.setFlowIndicator(indicator);

@@ -463,6 +463,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	@Override
 	public void setAdapter(Adapter adapter) {
+		setAdapter(adapter, 0);
+	}
+	
+	public void setAdapter(Adapter adapter, int initialPosition) {
 		if (mAdapter != null) {
 			mAdapter.unregisterDataSetObserver(mDataSetObserver);
 		}
@@ -476,19 +480,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 		if (mAdapter == null || mAdapter.getCount() == 0)
 			return;
-
-		for (int i = 0; i < Math.min(mAdapter.getCount(), mSideBuffer + 1); i++) {
-			mLoadedViews.addLast(makeAndAddView(i, true, null));
-		}
-
-		mCurrentAdapterIndex = 0;
-		mCurrentBufferIndex = 0;
-		requestLayout();
-		setVisibleView(mCurrentBufferIndex, false);
-		if (mViewSwitchListener != null)
-			mViewSwitchListener.onSwitched(mLoadedViews.get(0), 0);
+		
+		setSelection(initialPosition);		
 	}
-	  
+	
 	@Override
 	public View getSelectedView() {
 		return (mCurrentBufferIndex < mLoadedViews.size() ? mLoadedViews
