@@ -30,6 +30,7 @@
         <attr name="clipPadding" format="dimension" />
         <attr name="selectedColor" format="color" />
         <attr name="selectedBold" format="boolean" />
+        <attr name="selectedSize" format="dimension" />
         <attr name="textColor" format="color" />
         <attr name="textSize" format="dimension" />
         <attr name="footerLineHeight" format="dimension" />
