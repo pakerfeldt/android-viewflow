@@ -42,7 +42,6 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	private static final float CLIP_PADDING = 0.0f;
 	private static final int SELECTED_COLOR = 0xFFFFC445;
 	private static final boolean SELECTED_BOLD = false;
-	private static final int SELECTED_SIZE = 15;
 	private static final int TEXT_COLOR = 0xFFAAAAAA;
 	private static final int TEXT_SIZE = 15;
 	private static final float FOOTER_LINE_HEIGHT = 4.0f;
@@ -70,7 +69,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 */
 	public TitleFlowIndicator(Context context) {
 		super(context);
-		initDraw(TEXT_COLOR, TEXT_SIZE, SELECTED_COLOR, SELECTED_BOLD, SELECTED_SIZE, FOOTER_LINE_HEIGHT, FOOTER_COLOR);
+		initDraw(TEXT_COLOR, TEXT_SIZE, SELECTED_COLOR, SELECTED_BOLD, TEXT_SIZE, FOOTER_LINE_HEIGHT, FOOTER_COLOR);
 	}
 
 	/**
@@ -89,9 +88,9 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		footerTriangleHeight = a.getDimension(R.styleable.TitleFlowIndicator_footerTriangleHeight, FOOTER_TRIANGLE_HEIGHT);
 		int selectedColor = a.getColor(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_COLOR);
 		boolean selectedBold = a.getBoolean(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_BOLD);
-		float selectedSize = a.getDimension(R.styleable.TitleFlowIndicator_selectedSize, SELECTED_SIZE);
 		int textColor = a.getColor(R.styleable.TitleFlowIndicator_textColor, TEXT_COLOR);
 		float textSize = a.getDimension(R.styleable.TitleFlowIndicator_textSize, TEXT_SIZE);
+		float selectedSize = a.getDimension(R.styleable.TitleFlowIndicator_selectedSize, textSize);
 		titlePadding = a.getDimension(R.styleable.TitleFlowIndicator_titlePadding, TITLE_PADDING);
 		clipPadding = a.getDimension(R.styleable.TitleFlowIndicator_clipPadding, CLIP_PADDING);
 		initDraw(textColor, textSize, selectedColor, selectedBold, selectedSize, footerLineHeight, footerColor);

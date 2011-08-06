@@ -61,7 +61,7 @@ This indicator presents the title of the previous, current and next `View` in th
 			android:layout_width="fill_parent"
 			app:footerLineHeight="2dp"
 			app:footerTriangleHeight="10dp" app:textColor="#FFFFFFFF" app:selectedColor="#FFFFC445"
-			app:footerColor="#FFFFC445" app:titlePadding="10dp" app:textSize="11dp" app:selectedSize="16dp"
+			app:footerColor="#FFFFC445" app:titlePadding="10dp" app:textSize="11dp" app:selectedSize="12dp"
 			android:layout_marginTop="10dip"
 			app:clipPadding="5dp" />
 

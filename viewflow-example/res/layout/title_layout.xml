@@ -10,7 +10,7 @@
 			android:id="@+id/viewflowindic" android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			app:footerLineHeight="2dp"
-			app:footerTriangleHeight="10dp" app:textColor="#FFFFFFFF" app:selectedColor="#FFFFC445" app:footerColor="#FFFFC445" app:titlePadding="10dp" app:textSize="11dp" app:selectedSize="16dp" android:layout_marginTop="10dip" app:clipPadding="5dp"></org.taptwo.android.widget.TitleFlowIndicator>
+			app:footerTriangleHeight="10dp" app:textColor="#FFFFFFFF" app:selectedColor="#FFFFC445" app:footerColor="#FFFFC445" app:titlePadding="10dp" app:textSize="11dp" app:selectedSize="12dp" android:layout_marginTop="10dip" app:clipPadding="5dp"></org.taptwo.android.widget.TitleFlowIndicator>
 
 	</LinearLayout>
 	<org.taptwo.android.widget.ViewFlow
