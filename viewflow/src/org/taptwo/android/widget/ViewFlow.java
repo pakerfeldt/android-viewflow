@@ -536,8 +536,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 			if(rightIndex < mAdapter.getCount())
 				mLoadedViews.addLast(makeAndAddView(rightIndex, true,
 						(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
-			if(leftIndex < 0 && rightIndex >= mAdapter.getCount())
-				break;
 		}
 
 		mCurrentBufferIndex = mLoadedViews.indexOf(currentView);
