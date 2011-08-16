@@ -523,13 +523,24 @@ public class ViewFlow extends AdapterView<Adapter> {
 			detachViewFromParent(recycleView);
 		}
 
-		for (int i = Math.max(0, position - mSideBuffer); i < Math.min(
-				mAdapter.getCount(), position + mSideBuffer + 1); i++) {
-			mLoadedViews.addLast(makeAndAddView(i, true,
-					(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
-			if (i == position)
-				mCurrentBufferIndex = mLoadedViews.size() - 1;
+		View currentView = makeAndAddView(position, true,
+				(recycleViews.isEmpty() ? null : recycleViews.remove(0)));
+		mLoadedViews.addLast(currentView);
+		
+		for(int offset = 1; mSideBuffer - offset >= 0; offset++) {
+			int leftIndex = position - offset;
+			int rightIndex = position + offset;
+			if(leftIndex >= 0)
+				mLoadedViews.addFirst(makeAndAddView(leftIndex, false,
+						(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
+			if(rightIndex < mAdapter.getCount())
+				mLoadedViews.addLast(makeAndAddView(rightIndex, true,
+						(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
+			if(leftIndex < 0 && rightIndex >= mAdapter.getCount())
+				break;
 		}
+
+		mCurrentBufferIndex = mLoadedViews.indexOf(currentView);
 		mCurrentAdapterIndex = position;
 
 		for (View view : recycleViews) {
