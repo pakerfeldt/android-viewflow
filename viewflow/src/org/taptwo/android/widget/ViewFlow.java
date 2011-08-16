@@ -369,6 +369,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 			break;
 		case MotionEvent.ACTION_CANCEL:
+			snapToDestination();
 			mTouchState = TOUCH_STATE_REST;
 		}
 		return true;
