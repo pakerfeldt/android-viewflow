@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	
+	<ProgressBar android:id="@+id/progress"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"></ProgressBar>
+		
+	<LinearLayout android:layout_height="wrap_content"
+		android:id="@+id/content" android:layout_width="match_parent"
+		android:orientation="vertical">
+		
+		<TextView android:id="@+id/text" android:text="Content loaded."
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+
+		<TextView android:id="@+id/date" android:text="This is content."
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+			
+	</LinearLayout>
+
+</LinearLayout>

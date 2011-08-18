@@ -5,4 +5,5 @@
     <string name="title_title">TitleFlowIndicator</string>
     <string name="circle_title">CircleFlowIndicator</string>
     <string name="diff_title">DifferentViewFlow</string>
+    <string name="async_title">AsyncDataLoading</string>
 </resources>
