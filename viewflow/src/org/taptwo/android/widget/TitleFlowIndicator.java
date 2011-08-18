@@ -205,8 +205,10 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 
 		// Draw the footer line
 		path = new Path();
-        path.moveTo(0, getHeight()-footerLineHeight);
-        path.lineTo(getWidth(), getHeight()-footerLineHeight);
+		int coordY = getHeight()-1;
+		coordY -= (footerLineHeight%2 == 1) ? footerLineHeight/2 : footerLineHeight/2-1;
+		path.moveTo(0, coordY);
+		path.lineTo(getWidth(), coordY);
         path.close();        
         canvas.drawPath(path, paintFooterLine);
         // Draw the footer triangle
