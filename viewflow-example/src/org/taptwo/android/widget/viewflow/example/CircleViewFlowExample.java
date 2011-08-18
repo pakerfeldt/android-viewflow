@@ -34,10 +34,9 @@ public class CircleViewFlowExample extends Activity {
 		setContentView(R.layout.circle_layout);
 
 		viewFlow = (ViewFlow) findViewById(R.id.viewflow);
-		viewFlow.setAdapter(new ImageAdapter(this));
+		viewFlow.setAdapter(new ImageAdapter(this), 5);
 		CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
 		viewFlow.setFlowIndicator(indic);
-		
 	}
 	/* If your min SDK version is < 8 you need to trigger the onConfigurationChanged in ViewFlow manually, like this */	
 	@Override
