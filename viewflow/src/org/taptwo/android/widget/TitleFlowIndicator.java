@@ -47,6 +47,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	private static final float FOOTER_LINE_HEIGHT = 4.0f;
 	private static final int FOOTER_COLOR = 0xFFFFC445;
 	private static final float FOOTER_TRIANGLE_HEIGHT = 10;
+	private static final int SIDE_TITLE = 1;
 	private ViewFlow viewFlow;
 	private int currentScroll = 0;
 	private TitleProvider titleProvider = null;
@@ -58,6 +59,8 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	private Paint paintFooterTriangle;
 	private float footerTriangleHeight;
 	private float titlePadding;
+	private int sideTitle;
+	
 	/**
 	 * Left and right side padding for not active view titles.
 	 */
@@ -93,6 +96,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		float selectedSize = a.getDimension(R.styleable.TitleFlowIndicator_selectedSize, textSize);
 		titlePadding = a.getDimension(R.styleable.TitleFlowIndicator_titlePadding, TITLE_PADDING);
 		clipPadding = a.getDimension(R.styleable.TitleFlowIndicator_clipPadding, CLIP_PADDING);
+		sideTitle = a.getInteger(R.styleable.TitleFlowIndicator_sideTitle, SIDE_TITLE);
 		initDraw(textColor, textSize, selectedColor, selectedBold, selectedSize, footerLineHeight, footerColor);
 	}
 
@@ -138,11 +142,11 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		int curViewWidth = curViewBound.right - curViewBound.left;
 		if (curViewBound.left < 0) {
 			// Try to clip to the screen (left side)
-			clipViewOnTheLeft(curViewBound, curViewWidth);
+			clipViewOnTheLeft(curViewBound, curViewWidth, sideTitle);
 		}
 		if (curViewBound.right > getLeft() + getWidth()) {
 			// Try to clip to the screen (right side)
-			clipViewOnTheRight(curViewBound, curViewWidth);
+			clipViewOnTheRight(curViewBound, curViewWidth, sideTitle);
 		}
 		
 		// Left views starting from the current position
@@ -153,13 +157,14 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 				// Si left side is outside the screen
 				if (bound.left < 0) {
 					// Try to clip to the screen (left side)
-					 clipViewOnTheLeft(bound, w);
+					 clipViewOnTheLeft(bound, w, currentPosition-iLoop);
 					// Except if there's an intersection with the right view
 					if (iLoop < count - 1 && currentPosition != iLoop) {
 						Rect rightBound = bounds.get(iLoop + 1);
 						// Intersection
 						if (bound.right + TITLE_PADDING > rightBound.left) {
 							bound.left = rightBound.left - (w + (int)titlePadding);
+							bound.right = bound.left + w;
 						}
 					}
 				}
@@ -173,13 +178,14 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 				// If right side is outside the screen
 				if (bound.right > getLeft() + getWidth()) {
 					// Try to clip to the screen (right side)
-					clipViewOnTheRight(bound, w);
+					clipViewOnTheRight(bound, w, iLoop-currentPosition);
 					// Except if there's an intersection with the left view
 					if (iLoop > 0 && currentPosition != iLoop) {
 						Rect leftBound = bounds.get(iLoop - 1);
 						// Intersection
 						if (bound.left - TITLE_PADDING < leftBound.right) {
 							bound.left = leftBound.right + (int)titlePadding;
+							bound.right = bound.left + w;
 						}
 					}
 				}
@@ -228,9 +234,12 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 *            current bounds.
 	 * @param curViewWidth
 	 *            width of the view.
+	 * @param position
+	 * 			  position order
 	 */
-	private void clipViewOnTheRight(Rect curViewBound, int curViewWidth) {
-		curViewBound.right = getLeft() + getWidth() - (int)clipPadding;
+	private void clipViewOnTheRight(Rect curViewBound, int curViewWidth, int position) {
+		int topRight = getLeft() + getWidth() - (int)clipPadding;
+		curViewBound.right = (sideTitle+position)*topRight/(2*sideTitle);
 		curViewBound.left = curViewBound.right - curViewWidth;
 	}
 
@@ -241,10 +250,13 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	 *            current bounds.
 	 * @param curViewWidth
 	 *            width of the view.
+	 * @param position
+	 * 			  position order            
 	 */
-	private void clipViewOnTheLeft(Rect curViewBound, int curViewWidth) {
-		curViewBound.left = 0 + (int)clipPadding;
-		curViewBound.right = curViewWidth;
+	private void clipViewOnTheLeft(Rect curViewBound, int curViewWidth, int position) {
+		int topRight = getLeft() + getWidth() - (int)clipPadding;
+		curViewBound.left = (sideTitle-position)*topRight/(2*sideTitle);
+		curViewBound.right = curViewBound.left+curViewWidth;
 	}
 
 	/**

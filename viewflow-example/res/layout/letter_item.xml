@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:isScrollContainer="true"
+	android:layout_height="fill_parent" android:scrollbars="vertical"
+	android:scrollbarAlwaysDrawVerticalTrack="true">
+		<TextView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/letterView" android:src="@drawable/android" android:gravity="center_vertical|center_horizontal" android:layout_gravity="center_vertical|center_horizontal" android:text="A" android:textSize="250dp"/>
+</LinearLayout>

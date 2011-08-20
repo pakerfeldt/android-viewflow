@@ -34,7 +34,7 @@ public class ViewFlowExample extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		listView = (ListView) findViewById(R.id.menu);
-		String[] listeStrings = { "Circle indicator...", "Title indicator...", "Different Views...", "Async Data Loading..." };
+		String[] listeStrings = { "Circle indicator...", "Title indicator...", "Different Views...", "Async Data Loading...", "Multi Title indicator..." };
 		listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listeStrings));
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -52,6 +52,9 @@ public class ViewFlowExample extends Activity {
 				case 3:
 					startActivity(new Intent(ViewFlowExample.this, AsyncDataFlowExample.class));
 					break;
+				case 4:
+					startActivity(new Intent(ViewFlowExample.this, MultiTitleViewFlowExample.class));
+					break;					
 				}
 			}
 		});
