@@ -44,14 +44,14 @@ import android.view.animation.Animation.AnimationListener;
  * radius: Define the circle radius (default to 4.0)
  * </ul>
  */
-public class CircleFlowIndicator extends View implements FlowIndicator, AnimationListener {
+public class CircleFlowIndicator extends View implements FlowIndicator,
+		AnimationListener {
 	private static final int STYLE_STROKE = 0;
 	private static final int STYLE_FILL = 1;
-	
-	private static final int FADE_OUT = 2;
-	
+
 	private float radius = 4;
-	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private int fadeOutTime = 0;
+	private final Paint mPaintInactive = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private ViewFlow viewFlow;
 	private int currentScroll = 0;
@@ -118,6 +118,10 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
+		
+		// Retrieve the fade out time
+		fadeOutTime = a.getInt(R.styleable.CircleFlowIndicator_fadeOut, 0);
+		
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
 
@@ -126,12 +130,12 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 		// Select the paint type given the type attr
 		switch (inactiveType) {
 		case STYLE_FILL:
-			mPaintStroke.setStyle(Style.FILL);
+			mPaintInactive.setStyle(Style.FILL);
 			break;
 		default:
-			mPaintStroke.setStyle(Style.STROKE);
+			mPaintInactive.setStyle(Style.STROKE);
 		}
-		mPaintStroke.setColor(inactiveColor);
+		mPaintInactive.setColor(inactiveColor);
 
 		// Select the paint type given the type attr
 		switch (activeType) {
@@ -160,7 +164,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 		for (int iLoop = 0; iLoop < count; iLoop++) {
 			canvas.drawCircle(getPaddingLeft() + radius
 					+ (iLoop * (2 * radius + radius)),
-					getPaddingTop() + radius, radius, mPaintStroke);
+					getPaddingTop() + radius, radius, mPaintInactive);
 		}
 		float cx = 0;
 		if (flowWidth != 0) {
@@ -303,39 +307,42 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 	 *            ARGB value for the text
 	 */
 	public void setStrokeColor(int color) {
-		mPaintStroke.setColor(color);
+		mPaintInactive.setColor(color);
 		invalidate();
 	}
-	
+
 	/**
 	 * Resets the fade out timer to 0. Creating a new one if needed
 	 */
 	private void resetTimer() {
-		// Check if we need to create a new timer
-		if (timer == null || timer._run == false) {
-			// Create and start a new timer
-			timer = new FadeTimer();
-			timer.execute();
-		}
-		else {
-			// Reset the current tiemr to 0
-			timer.resetTimer();
+		// Only set the timer if we have a timeout of at least 1 second
+		if (fadeOutTime > 0) {
+			// Check if we need to create a new timer
+			if (timer == null || timer._run == false) {
+				// Create and start a new timer
+				timer = new FadeTimer();
+				timer.execute();
+			} else {
+				// Reset the current tiemr to 0
+				timer.resetTimer();
+			}
 		}
 	}
-	
+
 	/**
-	 * Counts from 0 to the fade out time and animates the view away when reached
+	 * Counts from 0 to the fade out time and animates the view away when
+	 * reached
 	 */
 	private class FadeTimer extends AsyncTask<Void, Void, Void> {
 		// The current count
 		private int timer = 0;
 		// If we are inside the timing loop
 		private boolean _run = true;
-		
+
 		public void resetTimer() {
 			timer = 0;
 		}
-		
+
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			while (_run) {
@@ -344,9 +351,9 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 					Thread.sleep(1000);
 					// Increment the timer
 					timer++;
-					
+
 					// Check if we've reached the fade out time
-					if (timer == FADE_OUT) {
+					if (timer == fadeOutTime) {
 						// Stop running
 						_run = false;
 					}
@@ -357,10 +364,11 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 			}
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
-			animation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
+			animation = AnimationUtils.loadAnimation(getContext(),
+					android.R.anim.fade_out);
 			animation.setAnimationListener(animationListener);
 			startAnimation(animation);
 		}
@@ -377,7 +385,5 @@ public class CircleFlowIndicator extends View implements FlowIndicator, Animatio
 
 	@Override
 	public void onAnimationStart(Animation animation) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -23,6 +23,7 @@
         <attr name="inactiveColor" format="color" />
         <attr name="radius" format="dimension" />
 		<attr name="centered" format="boolean" />
+		<attr name="fadeOut" format="integer" />
 		<attr name="inactiveType">
 			<flag name="stroke" value="0" />
 			<flag name="fill" value="1" />
