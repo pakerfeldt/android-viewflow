@@ -71,35 +71,35 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// Retrieve styles attributs
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.CircleFlowIndicator);
-		
+
 		// Gets the inactive circle type, defaulting to "fill"
-		int activeType = a.getInt(
-				R.styleable.CircleFlowIndicator_activeType, STYLE_FILL);
+		int activeType = a.getInt(R.styleable.CircleFlowIndicator_activeType,
+				STYLE_FILL);
 		// Work out the active color based on the type
-		int activeDefaultColor = 0xFFFFFFFF;
+		int activeDefaultColor;
 		switch (activeType) {
 		case STYLE_STROKE:
 			activeDefaultColor = 0xFFFFC445;
 			break;
-		case STYLE_FILL:
+		default:
 			activeDefaultColor = 0xFFFFFFFF;
 		}
 		// Get a custom inactive color if there is one
-		int activeColor = a.getColor(
-				R.styleable.CircleFlowIndicator_activeColor,
-				activeDefaultColor);
-		
+		int activeColor = a
+				.getColor(R.styleable.CircleFlowIndicator_activeColor,
+						activeDefaultColor);
+
 		// Gets the inactive circle type, defaulting to "stroke"
 		int inactiveType = a.getInt(
 				R.styleable.CircleFlowIndicator_inactiveType, STYLE_STROKE);
 		// Work out the inactive color based on the type
-		int inactiveDefaultColor = 0xFFFFFFFF;
+		int inactiveDefaultColor;
 		switch (inactiveType) {
-		case STYLE_STROKE:
-			inactiveDefaultColor = 0xFFFFFFFF;
-			break;
 		case STYLE_FILL:
 			inactiveDefaultColor = 0x44FFFFFF;
+			break;
+		default:
+			inactiveDefaultColor = 0xFFFFFFFF;
 		}
 		// Get a custom inactive color if there is one
 		int inactiveColor = a.getColor(
@@ -111,14 +111,15 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
 
-	private void initColors(int activeColor, int inactiveColor, int activeType, int inactiveType) {
+	private void initColors(int activeColor, int inactiveColor, int activeType,
+			int inactiveType) {
 		// Select the paint type given the type attr
 		switch (inactiveType) {
-		case STYLE_STROKE:
-			mPaintStroke.setStyle(Style.STROKE);
-			break;
 		case STYLE_FILL:
 			mPaintStroke.setStyle(Style.FILL);
+			break;
+		default:
+			mPaintStroke.setStyle(Style.STROKE);
 		}
 		mPaintStroke.setColor(inactiveColor);
 
@@ -127,7 +128,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		case STYLE_STROKE:
 			mPaintActive.setStyle(Style.STROKE);
 			break;
-		case STYLE_FILL:
+		default:
 			mPaintActive.setStyle(Style.FILL);
 		}
 		mPaintActive.setColor(activeColor);
@@ -159,7 +160,6 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// The flow width has been upadated yet. Draw the default position
 		canvas.drawCircle(getPaddingLeft() + radius + cx, getPaddingTop()
 				+ radius, radius, mPaintActive);
-
 	}
 
 	/*
