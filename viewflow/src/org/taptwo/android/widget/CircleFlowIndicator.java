@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -43,12 +44,14 @@ import android.view.View;
 public class CircleFlowIndicator extends View implements FlowIndicator {
 	private static final int STYLE_STROKE = 0;
 	private static final int STYLE_FILL = 1;
+	
 	private float radius = 4;
 	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private ViewFlow viewFlow;
 	private int currentScroll = 0;
 	private int flowWidth = 0;
+	private FadeTimer timer;
 
 	/**
 	 * Default constructor
@@ -109,6 +112,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
+		
+		
 	}
 
 	private void initColors(int activeColor, int inactiveColor, int activeType,
@@ -182,6 +187,9 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	@Override
 	public void setViewFlow(ViewFlow view) {
+		timer = new FadeTimer();
+		timer.start();
+		
 		viewFlow = view;
 		flowWidth = viewFlow.getWidth();
 		invalidate();
@@ -195,6 +203,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	@Override
 	public void onScrolled(int h, int v, int oldh, int oldv) {
+		timer.resetTimer();
 		currentScroll = h;
 		flowWidth = viewFlow.getWidth();
 		invalidate();
@@ -292,5 +301,32 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	public void setStrokeColor(int color) {
 		mPaintStroke.setColor(color);
 		invalidate();
+	}
+	
+	// TODO: Stop this counting when view not in view
+	// TODO: Stop counting when limit hit
+	// TODO: Start animation when limit hit
+	private class FadeTimer extends Thread {
+		private int timer = 0;
+		private boolean _run = true;
+		
+		public void resetTimer() {
+			Log.d("Circle", "Timer reset");
+			timer = 0;
+		}
+		
+		@Override
+		public void run() {
+			while (_run) {
+				try {
+					Thread.sleep(1000);
+					timer++;
+					Log.d("Circle", "Timer\t" + timer);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
