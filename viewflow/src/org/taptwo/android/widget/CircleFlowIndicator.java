@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik Åkerfeldt
+ * Copyright (C) 2011 Patrik ÔøΩkerfeldt
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	public CircleFlowIndicator(Context context) {
 		super(context);
-		initColors(0xFFFFFFFF, 0xFFFFFFFF);
+		initColors(0xFFFFFFFF, 0xFFFFFFFF, "stroke");
 	}
 
 	/**
@@ -63,20 +63,36 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.CircleFlowIndicator);
 		// Retrieve the colors to be used for this view and apply them.
-		int fillColor = a.getColor(R.styleable.CircleFlowIndicator_fillColor,
+		int activeColor = a.getColor(R.styleable.CircleFlowIndicator_fillColor,
 				0xFFFFFFFF);
-		int strokeColor = a.getColor(
-				R.styleable.CircleFlowIndicator_strokeColor, 0xFFFFFFFF);
+		String type = a.getString(R.styleable.CircleFlowIndicator_type);
+		int inactiveColor;
+		if (type != null && type.equals("fill")) {
+			inactiveColor = a.getColor(
+				R.styleable.CircleFlowIndicator_strokeColor, 0x44FFFFFF);
+		}
+		else {
+			inactiveColor = a.getColor(
+					R.styleable.CircleFlowIndicator_strokeColor, 0xFFFFFFFF);
+		}
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
-		initColors(fillColor, strokeColor);
+		initColors(activeColor, inactiveColor, type);
 	}
 
-	private void initColors(int fillColor, int strokeColor) {
-		mPaintStroke.setStyle(Style.STROKE);
-		mPaintStroke.setColor(strokeColor);
+	private void initColors(int activeColor, int inactiveColor, String type) {
+		if (type != null && type.equals("fill")) {
+			mPaintStroke.setStyle(Style.FILL);
+		}
+		else {
+			mPaintStroke.setStyle(Style.STROKE);
+		}
+		mPaintStroke.setColor(inactiveColor);
+		mPaintStroke.setAntiAlias(true);
+		mPaintStroke.setDither(true);
+		
 		mPaintFill.setStyle(Style.FILL);
-		mPaintFill.setColor(fillColor);
+		mPaintFill.setColor(activeColor);
 	}
 
 	/*
