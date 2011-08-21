@@ -315,7 +315,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 * Resets the fade out timer to 0. Creating a new one if needed
 	 */
 	private void resetTimer() {
-		// Only set the timer if we have a timeout of at least 1 second
+		// Only set the timer if we have a timeout of at least 1 millisecond
 		if (fadeOutTime > 0) {
 			// Check if we need to create a new timer
 			if (timer == null || timer._run == false) {
@@ -347,8 +347,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		protected Void doInBackground(Void... arg0) {
 			while (_run) {
 				try {
-					// Wait for a second
-					Thread.sleep(1000);
+					// Wait for a millisecond
+					Thread.sleep(1);
 					// Increment the timer
 					timer++;
 

@@ -11,7 +11,7 @@
 		android:id="@+id/viewflowindic"
 		android:layout_gravity="center_horizontal"
 		app:inactiveType="fill"
-		app:fadeOut="1" />
+		app:fadeOut="1000" />
 	<org.taptwo.android.widget.ViewFlow
 		android:id="@+id/viewflow" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" app:sidebuffer="3"></org.taptwo.android.widget.ViewFlow>
