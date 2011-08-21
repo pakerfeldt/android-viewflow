@@ -19,11 +19,15 @@
         <attr name="sidebuffer" format="integer" />
     </declare-styleable>
     <declare-styleable name="CircleFlowIndicator">
-        <attr name="fillColor" format="color" />
-        <attr name="strokeColor" format="color" />
+        <attr name="activeColor" format="color" />
+        <attr name="inactiveColor" format="color" />
         <attr name="radius" format="dimension" />
 		<attr name="centered" format="boolean" />
 		<attr name="inactiveType">
+			<flag name="stroke" value="0" />
+			<flag name="fill" value="1" />
+		</attr>
+		<attr name="activeType">
 			<flag name="stroke" value="0" />
 			<flag name="fill" value="1" />
 		</attr>

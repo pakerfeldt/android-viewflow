@@ -41,11 +41,11 @@ import android.view.View;
  * </ul>
  */
 public class CircleFlowIndicator extends View implements FlowIndicator {
-	private static final int INACTIVE_STROKE = 0;
-	private static final int INACTIVE_FILL = 1;
+	private static final int STYLE_STROKE = 0;
+	private static final int STYLE_FILL = 1;
 	private float radius = 4;
 	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-	private final Paint mPaintFill = new Paint(Paint.ANTI_ALIAS_FLAG);
+	private final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private ViewFlow viewFlow;
 	private int currentScroll = 0;
 	private int flowWidth = 0;
@@ -57,7 +57,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	public CircleFlowIndicator(Context context) {
 		super(context);
-		initColors(0xFFFFFFFF, 0xFFFFFFFF, INACTIVE_STROKE);
+		initColors(0xFFFFFFFF, 0xFFFFFFFF, STYLE_FILL, STYLE_STROKE);
 	}
 
 	/**
@@ -71,44 +71,66 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// Retrieve styles attributs
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.CircleFlowIndicator);
-		// Retrieve the colors to be used for this view and apply them.
-		int activeColor = a.getColor(R.styleable.CircleFlowIndicator_fillColor,
-				0xFFFFFFFF);
+		
+		// Gets the inactive circle type, defaulting to "fill"
+		int activeType = a.getInt(
+				R.styleable.CircleFlowIndicator_activeType, STYLE_FILL);
+		// Work out the active color based on the type
+		int activeDefaultColor = 0xFFFFFFFF;
+		switch (activeType) {
+		case STYLE_STROKE:
+			activeDefaultColor = 0xFFFFC445;
+			break;
+		case STYLE_FILL:
+			activeDefaultColor = 0xFFFFFFFF;
+		}
+		// Get a custom inactive color if there is one
+		int activeColor = a.getColor(
+				R.styleable.CircleFlowIndicator_activeColor,
+				activeDefaultColor);
+		
 		// Gets the inactive circle type, defaulting to "stroke"
 		int inactiveType = a.getInt(
-				R.styleable.CircleFlowIndicator_inactiveType, INACTIVE_STROKE);
+				R.styleable.CircleFlowIndicator_inactiveType, STYLE_STROKE);
 		// Work out the inactive color based on the type
 		int inactiveDefaultColor = 0xFFFFFFFF;
 		switch (inactiveType) {
-		case INACTIVE_STROKE:
+		case STYLE_STROKE:
 			inactiveDefaultColor = 0xFFFFFFFF;
 			break;
-		case INACTIVE_FILL:
+		case STYLE_FILL:
 			inactiveDefaultColor = 0x44FFFFFF;
 		}
 		// Get a custom inactive color if there is one
 		int inactiveColor = a.getColor(
-				R.styleable.CircleFlowIndicator_strokeColor,
+				R.styleable.CircleFlowIndicator_inactiveColor,
 				inactiveDefaultColor);
 
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
-		initColors(activeColor, inactiveColor, inactiveType);
+		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
 
-	private void initColors(int activeColor, int inactiveColor, int inactiveType) {
+	private void initColors(int activeColor, int inactiveColor, int activeType, int inactiveType) {
 		// Select the paint type given the type attr
 		switch (inactiveType) {
-		case INACTIVE_STROKE:
+		case STYLE_STROKE:
 			mPaintStroke.setStyle(Style.STROKE);
 			break;
-		case INACTIVE_FILL:
+		case STYLE_FILL:
 			mPaintStroke.setStyle(Style.FILL);
 		}
 		mPaintStroke.setColor(inactiveColor);
 
-		mPaintFill.setStyle(Style.FILL);
-		mPaintFill.setColor(activeColor);
+		// Select the paint type given the type attr
+		switch (activeType) {
+		case STYLE_STROKE:
+			mPaintActive.setStyle(Style.STROKE);
+			break;
+		case STYLE_FILL:
+			mPaintActive.setStyle(Style.FILL);
+		}
+		mPaintActive.setColor(activeColor);
 	}
 
 	/*
@@ -136,7 +158,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		}
 		// The flow width has been upadated yet. Draw the default position
 		canvas.drawCircle(getPaddingLeft() + radius + cx, getPaddingTop()
-				+ radius, radius, mPaintFill);
+				+ radius, radius, mPaintActive);
 
 	}
 
@@ -257,7 +279,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 *            ARGB value for the text
 	 */
 	public void setFillColor(int color) {
-		mPaintFill.setColor(color);
+		mPaintActive.setColor(color);
 		invalidate();
 	}
 
