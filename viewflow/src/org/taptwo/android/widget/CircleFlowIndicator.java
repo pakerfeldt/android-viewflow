@@ -22,9 +22,12 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Animation.AnimationListener;
 
 /**
  * A FlowIndicator which draws circles (one for each view). The current view
@@ -41,9 +44,11 @@ import android.view.View;
  * radius: Define the circle radius (default to 4.0)
  * </ul>
  */
-public class CircleFlowIndicator extends View implements FlowIndicator {
+public class CircleFlowIndicator extends View implements FlowIndicator, AnimationListener {
 	private static final int STYLE_STROKE = 0;
 	private static final int STYLE_FILL = 1;
+	
+	private static final int FADE_OUT = 2;
 	
 	private float radius = 4;
 	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -52,6 +57,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	private int currentScroll = 0;
 	private int flowWidth = 0;
 	private FadeTimer timer;
+	public AnimationListener animationListener = this;
+	private Animation animation;
 
 	/**
 	 * Default constructor
@@ -112,8 +119,6 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
-		
-		
 	}
 
 	private void initColors(int activeColor, int inactiveColor, int activeType,
@@ -187,9 +192,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	@Override
 	public void setViewFlow(ViewFlow view) {
-		timer = new FadeTimer();
-		timer.start();
-		
+		resetTimer();
 		viewFlow = view;
 		flowWidth = viewFlow.getWidth();
 		invalidate();
@@ -203,7 +206,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	@Override
 	public void onScrolled(int h, int v, int oldh, int oldv) {
-		timer.resetTimer();
+		setVisibility(View.VISIBLE);
+		resetTimer();
 		currentScroll = h;
 		flowWidth = viewFlow.getWidth();
 		invalidate();
@@ -303,30 +307,77 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		invalidate();
 	}
 	
-	// TODO: Stop this counting when view not in view
-	// TODO: Stop counting when limit hit
-	// TODO: Start animation when limit hit
-	private class FadeTimer extends Thread {
+	/**
+	 * Resets the fade out timer to 0. Creating a new one if needed
+	 */
+	private void resetTimer() {
+		// Check if we need to create a new timer
+		if (timer == null || timer._run == false) {
+			// Create and start a new timer
+			timer = new FadeTimer();
+			timer.execute();
+		}
+		else {
+			// Reset the current tiemr to 0
+			timer.resetTimer();
+		}
+	}
+	
+	/**
+	 * Counts from 0 to the fade out time and animates the view away when reached
+	 */
+	private class FadeTimer extends AsyncTask<Void, Void, Void> {
+		// The current count
 		private int timer = 0;
+		// If we are inside the timing loop
 		private boolean _run = true;
 		
 		public void resetTimer() {
-			Log.d("Circle", "Timer reset");
 			timer = 0;
 		}
 		
 		@Override
-		public void run() {
+		protected Void doInBackground(Void... arg0) {
 			while (_run) {
 				try {
+					// Wait for a second
 					Thread.sleep(1000);
+					// Increment the timer
 					timer++;
-					Log.d("Circle", "Timer\t" + timer);
+					
+					// Check if we've reached the fade out time
+					if (timer == FADE_OUT) {
+						// Stop running
+						_run = false;
+					}
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			return null;
 		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			animation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out);
+			animation.setAnimationListener(animationListener);
+			startAnimation(animation);
+		}
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+		setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+	}
+
+	@Override
+	public void onAnimationStart(Animation animation) {
+		// TODO Auto-generated method stub
+		
 	}
 }
