@@ -23,7 +23,10 @@
         <attr name="strokeColor" format="color" />
         <attr name="radius" format="dimension" />
 		<attr name="centered" format="boolean" />
-		<attr name="type" format="string" />
+		<attr name="inactiveType">
+			<flag name="stroke" value="0" />
+			<flag name="fill" value="1" />
+		</attr>
     </declare-styleable>    
     <declare-styleable name="TitleFlowIndicator">
         <attr name="titlePadding" format="dimension" />

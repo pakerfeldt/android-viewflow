@@ -27,13 +27,22 @@ import android.view.View;
 
 /**
  * A FlowIndicator which draws circles (one for each view). The current view
- * position is filled and others are only striked.<br/><br/>
+ * position is filled and others are only striked.<br/>
+ * <br/>
  * Availables attributes are:<br/>
- * <ul>fillColor: Define the color used to fill a circle (default to white)</ul>
- * <ul>strokeColor: Define the color used to stroke a circle (default to white)</ul>
- * <ul>radius: Define the circle radius (default to 4.0)</ul>
+ * <ul>
+ * fillColor: Define the color used to fill a circle (default to white)
+ * </ul>
+ * <ul>
+ * strokeColor: Define the color used to stroke a circle (default to white)
+ * </ul>
+ * <ul>
+ * radius: Define the circle radius (default to 4.0)
+ * </ul>
  */
 public class CircleFlowIndicator extends View implements FlowIndicator {
+	private static final int INACTIVE_STROKE = 0;
+	private static final int INACTIVE_FILL = 1;
 	private float radius = 4;
 	private final Paint mPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private final Paint mPaintFill = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -48,7 +57,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	 */
 	public CircleFlowIndicator(Context context) {
 		super(context);
-		initColors(0xFFFFFFFF, 0xFFFFFFFF, "stroke");
+		initColors(0xFFFFFFFF, 0xFFFFFFFF, INACTIVE_STROKE);
 	}
 
 	/**
@@ -65,32 +74,39 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		// Retrieve the colors to be used for this view and apply them.
 		int activeColor = a.getColor(R.styleable.CircleFlowIndicator_fillColor,
 				0xFFFFFFFF);
-		String type = a.getString(R.styleable.CircleFlowIndicator_type);
-		int inactiveColor;
-		if (type != null && type.equals("fill")) {
-			inactiveColor = a.getColor(
-				R.styleable.CircleFlowIndicator_strokeColor, 0x44FFFFFF);
+		// Gets the inactive circle type, defaulting to "stroke"
+		int inactiveType = a.getInt(
+				R.styleable.CircleFlowIndicator_inactiveType, INACTIVE_STROKE);
+		// Work out the inactive color based on the type
+		int inactiveDefaultColor = 0xFFFFFFFF;
+		switch (inactiveType) {
+		case INACTIVE_STROKE:
+			inactiveDefaultColor = 0xFFFFFFFF;
+			break;
+		case INACTIVE_FILL:
+			inactiveDefaultColor = 0x44FFFFFF;
 		}
-		else {
-			inactiveColor = a.getColor(
-					R.styleable.CircleFlowIndicator_strokeColor, 0xFFFFFFFF);
-		}
+		// Get a custom inactive color if there is one
+		int inactiveColor = a.getColor(
+				R.styleable.CircleFlowIndicator_strokeColor,
+				inactiveDefaultColor);
+
 		// Retrieve the radius
 		radius = a.getDimension(R.styleable.CircleFlowIndicator_radius, 4.0f);
-		initColors(activeColor, inactiveColor, type);
+		initColors(activeColor, inactiveColor, inactiveType);
 	}
 
-	private void initColors(int activeColor, int inactiveColor, String type) {
-		if (type != null && type.equals("fill")) {
+	private void initColors(int activeColor, int inactiveColor, int inactiveType) {
+		// Select the paint type given the type attr
+		switch (inactiveType) {
+		case INACTIVE_STROKE:
+			mPaintStroke.setStyle(Style.STROKE);
+			break;
+		case INACTIVE_FILL:
 			mPaintStroke.setStyle(Style.FILL);
 		}
-		else {
-			mPaintStroke.setStyle(Style.STROKE);
-		}
 		mPaintStroke.setColor(inactiveColor);
-		mPaintStroke.setAntiAlias(true);
-		mPaintStroke.setDither(true);
-		
+
 		mPaintFill.setStyle(Style.FILL);
 		mPaintFill.setColor(activeColor);
 	}
@@ -119,9 +135,9 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 			cx = (currentScroll * (2 * radius + radius)) / flowWidth;
 		}
 		// The flow width has been upadated yet. Draw the default position
-	    canvas.drawCircle(getPaddingLeft() + radius + cx,
-					getPaddingTop() + radius, radius, mPaintFill);
-		
+		canvas.drawCircle(getPaddingLeft() + radius + cx, getPaddingTop()
+				+ radius, radius, mPaintFill);
+
 	}
 
 	/*
@@ -135,8 +151,12 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 	public void onSwitched(View view, int position) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.taptwo.android.widget.FlowIndicator#setViewFlow(org.taptwo.android.widget.ViewFlow)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.taptwo.android.widget.FlowIndicator#setViewFlow(org.taptwo.android
+	 * .widget.ViewFlow)
 	 */
 	@Override
 	public void setViewFlow(ViewFlow view) {
@@ -145,10 +165,11 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		invalidate();
 	}
 
-	
-	
-	/* (non-Javadoc)
-	 * @see org.taptwo.android.widget.FlowIndicator#onScrolled(int, int, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.taptwo.android.widget.FlowIndicator#onScrolled(int, int, int,
+	 * int)
 	 */
 	@Override
 	public void onScrolled(int h, int v, int oldh, int oldv) {
@@ -190,7 +211,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 			if (viewFlow != null) {
 				count = viewFlow.getViewsCount();
 			}
-			result = (int)(getPaddingLeft() + getPaddingRight()
+			result = (int) (getPaddingLeft() + getPaddingRight()
 					+ (count * 2 * radius) + (count - 1) * radius + 1);
 			// Respect AT_MOST value if that was what is called for by
 			// measureSpec
@@ -219,7 +240,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator {
 		}
 		// Measure the height
 		else {
-			result = (int)(2 * radius + getPaddingTop() + getPaddingBottom() + 1);
+			result = (int) (2 * radius + getPaddingTop() + getPaddingBottom() + 1);
 			// Respect AT_MOST value if that was what is called for by
 			// measureSpec
 			if (specMode == MeasureSpec.AT_MOST) {
