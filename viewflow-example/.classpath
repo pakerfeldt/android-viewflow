@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="viewflow_src"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="org_taptwo_android_widget_viewflow_src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/viewflow"/>
+	<classpathentry kind="src" path="viewflow_src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
