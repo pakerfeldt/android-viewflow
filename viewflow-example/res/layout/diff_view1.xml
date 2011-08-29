@@ -3,6 +3,6 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent"
 	android:layout_width="fill_parent" android:orientation="vertical" android:weightSum="1">
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:text="Sample Text" android:id="@+id/textView1" android:layout_gravity="top" android:layout_height="wrap_content" android:layout_width="match_parent" android:gravity="center_horizontal"></TextView>
-    <ListView android:id="@+id/listView1" android:layout_width="match_parent" android:layout_height="fill_parent"></ListView>
+    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:text="Sample Text" android:id="@+id/textView1" android:layout_gravity="top" android:layout_height="wrap_content" android:layout_width="fill_parent" android:gravity="center_horizontal"></TextView>
+    <ListView android:id="@+id/listView1" android:layout_width="fill_parent" android:layout_height="fill_parent"></ListView>
 </LinearLayout>

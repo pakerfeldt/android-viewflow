@@ -3,5 +3,5 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent"
 	android:layout_width="fill_parent" android:orientation="vertical">
-    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:text="TextView" android:id="@+id/textView1" android:layout_width="match_parent" android:layout_height="fill_parent" android:layout_gravity="center_horizontal" android:gravity="center"></TextView>
+    <TextView android:textAppearance="?android:attr/textAppearanceLarge" android:text="TextView" android:id="@+id/textView1" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_gravity="center_horizontal" android:gravity="center"></TextView>
 </LinearLayout>
