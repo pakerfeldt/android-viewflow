@@ -94,8 +94,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		 *            the {@link View} currently in focus.
 		 * @param position
 		 *            The position in the adapter of the {@link View} currently in focus.
+		 * @param lastView
+		 *            the {@link View} which previously was in focus (may be null if no {@link View} was previously in focus).
 		 */
-		void onSwitched(View view, int position);
+		void onSwitched(View view, int position/*, View lastView*/);
 
 	}
 
@@ -624,6 +626,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 			mIndicator.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
 					mCurrentAdapterIndex);
 		}
+		Log.d("viewflow", "CurrentIndex: " + mCurrentBufferIndex + ", LastIndex: " + (mCurrentBufferIndex - direction));
 		if (mViewSwitchListener != null) {
 			mViewSwitchListener
 					.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
