@@ -30,15 +30,23 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
 
 /**
- * A FlowIndicator which draws circles (one for each view). The current view
- * position is filled and others are only striked.<br/>
+ * A FlowIndicator which draws circles (one for each view). 
  * <br/>
  * Availables attributes are:<br/>
  * <ul>
- * fillColor: Define the color used to fill a circle (default to white)
+ * activeColor: Define the color used to draw the active circle (default to white)
  * </ul>
  * <ul>
- * strokeColor: Define the color used to stroke a circle (default to white)
+ * inactiveColor: Define the color used to draw the inactive circles (default to 0x44FFFFFF)
+ * </ul>
+ * <ul>
+ * inactiveType: Define how to draw the inactive circles, either stroke or fill (default to stroke)
+ * </ul>
+ * <ul>
+ * activeType: Define how to draw the active circle, either stroke or fill (default to fill)
+ * </ul>
+ * <ul>
+ * fadeOut: Define the time (in ms) until the indicator will fade out (default to 0 = never fade out)
  * </ul>
  * <ul>
  * radius: Define the circle radius (default to 4.0)
@@ -85,15 +93,9 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		// Gets the inactive circle type, defaulting to "fill"
 		int activeType = a.getInt(R.styleable.CircleFlowIndicator_activeType,
 				STYLE_FILL);
-		// Work out the active color based on the type
-		int activeDefaultColor;
-		switch (activeType) {
-		case STYLE_STROKE:
-			activeDefaultColor = 0xFFFFC445;
-			break;
-		default:
-			activeDefaultColor = 0xFFFFFFFF;
-		}
+		
+		int activeDefaultColor = 0xFFFFFFFF;
+		
 		// Get a custom inactive color if there is one
 		int activeColor = a
 				.getColor(R.styleable.CircleFlowIndicator_activeColor,
@@ -102,15 +104,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		// Gets the inactive circle type, defaulting to "stroke"
 		int inactiveType = a.getInt(
 				R.styleable.CircleFlowIndicator_inactiveType, STYLE_STROKE);
-		// Work out the inactive color based on the type
-		int inactiveDefaultColor;
-		switch (inactiveType) {
-		case STYLE_FILL:
-			inactiveDefaultColor = 0x44FFFFFF;
-			break;
-		default:
-			inactiveDefaultColor = 0xFFFFFFFF;
-		}
+
+		int inactiveDefaultColor = 0x44FFFFFF;
 		// Get a custom inactive color if there is one
 		int inactiveColor = a.getColor(
 				R.styleable.CircleFlowIndicator_inactiveColor,
