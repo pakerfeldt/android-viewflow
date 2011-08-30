@@ -17,6 +17,10 @@
 			android:configChanges="orientation">
 
 		</activity>
+		
+		<activity android:name="MultiTitleViewFlowExample" android:label="@string/app_name"
+			android:configChanges="orientation">
+		</activity>		
 
 		<activity android:label="@string/app_name"
 			android:configChanges="orientation" android:name=".AsyncDataFlowExample">
