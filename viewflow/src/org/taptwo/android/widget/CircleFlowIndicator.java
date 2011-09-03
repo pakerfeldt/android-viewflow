@@ -67,6 +67,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	private FadeTimer timer;
 	public AnimationListener animationListener = this;
 	private Animation animation;
+	private boolean mCentered = false;
 
 	/**
 	 * Default constructor
@@ -117,6 +118,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		// Retrieve the fade out time
 		fadeOutTime = a.getInt(R.styleable.CircleFlowIndicator_fadeOut, 0);
 		
+		mCentered = a.getBoolean(R.styleable.CircleFlowIndicator_centered, false);
+		
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
 
@@ -155,10 +158,17 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		if (viewFlow != null) {
 			count = viewFlow.getViewsCount();
 		}
+		
+		float circleSeparation = 2*radius+radius;
+		//this is the amount the first circle should be offset to make the entire thing centered
+		float centeringOffset = 0;
+		
+		int leftPadding = getPaddingLeft();
+		
 		// Draw stroked circles
 		for (int iLoop = 0; iLoop < count; iLoop++) {
-			canvas.drawCircle(getPaddingLeft() + radius
-					+ (iLoop * (2 * radius + radius)),
+			canvas.drawCircle(leftPadding + radius
+					+ (iLoop * circleSeparation) + centeringOffset,
 					getPaddingTop() + radius, radius, mPaintInactive);
 		}
 		float cx = 0;
@@ -167,7 +177,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 			cx = (currentScroll * (2 * radius + radius)) / flowWidth;
 		}
 		// The flow width has been upadated yet. Draw the default position
-		canvas.drawCircle(getPaddingLeft() + radius + cx, getPaddingTop()
+		canvas.drawCircle(leftPadding + radius + cx+centeringOffset, getPaddingTop()
 				+ radius, radius, mPaintActive);
 	}
 
