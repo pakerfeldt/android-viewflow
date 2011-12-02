@@ -593,9 +593,16 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 			// Add new view to buffer
 			int newBufferIndex = mCurrentAdapterIndex + mSideBuffer;
-			if (newBufferIndex < mAdapter.getCount())
-				mLoadedViews.addLast(makeAndAddView(newBufferIndex, true,
+			if (newBufferIndex < mAdapter.getCount()) {
+				
+				//extra out of bounds check after making the view
+				try {
+					mLoadedViews.addLast(makeAndAddView(newBufferIndex, true,
 						recycleView));
+				} catch (ViewOutOfBoundsException e) {
+					Log.d("viewflow", "not adding view at position "+newBufferIndex+", it is out of bounds");
+				}
+			}
 
 		} else { // to the left
 			mCurrentAdapterIndex--;
@@ -649,6 +656,12 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
+		
+		//Check the count again before adding the child.
+		//This allows the adapter to be resized dynamically in the getView method if you have a non-constant data set.
+		if (position >= mAdapter.getCount()) {
+			throw new ViewOutOfBoundsException();
+		}
 		return setupChild(view, addToEnd, convertView != null);
 	}
 
