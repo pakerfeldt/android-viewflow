@@ -149,7 +149,12 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 
 		// Calculate views bounds
 		ArrayList<Rect> bounds = calculateAllBounds(paintText);
-
+		
+		// Extra check required for resizeable adapters
+		if (currentPosition > bounds.size()) {
+			return;
+		}
+		
 		// If no value then add a fake one
 		int count = (viewFlow != null && viewFlow.getAdapter() != null) ? viewFlow.getAdapter().getCount() : 1;
 
