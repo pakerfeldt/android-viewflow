@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Patrik �kerfeldt
+ * Copyright (C) 2011 Patrik Åkerfeldt
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,6 +361,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 	@Override
 	public void setViewFlow(ViewFlow view) {
 		viewFlow = view;
+		currentPosition = view.getSelectedItemPosition();
 		invalidate();
 	}
 
