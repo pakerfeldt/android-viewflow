@@ -100,7 +100,7 @@ public class TitleFlowIndicator extends TextView implements FlowIndicator {
 		footerLineHeight = a.getDimension(R.styleable.TitleFlowIndicator_footerLineHeight, FOOTER_LINE_HEIGHT);
 		footerTriangleHeight = a.getDimension(R.styleable.TitleFlowIndicator_footerTriangleHeight, FOOTER_TRIANGLE_HEIGHT);
 		int selectedColor = a.getColor(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_COLOR);
-		boolean selectedBold = a.getBoolean(R.styleable.TitleFlowIndicator_selectedColor, SELECTED_BOLD);
+		boolean selectedBold = a.getBoolean(R.styleable.TitleFlowIndicator_selectedBold, SELECTED_BOLD);
 		int textColor = a.getColor(R.styleable.TitleFlowIndicator_textColor, TEXT_COLOR);
 		float textSize = a.getDimension(R.styleable.TitleFlowIndicator_textSize, TEXT_SIZE);
 		float selectedSize = a.getDimension(R.styleable.TitleFlowIndicator_selectedSize, textSize);
