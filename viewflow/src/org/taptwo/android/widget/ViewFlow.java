@@ -53,6 +53,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private final static int TOUCH_STATE_SCROLLING = 1;
 
 	private LinkedList<View> mLoadedViews;
+	private LinkedList<View> mRecycledViews;
 	private int mCurrentBufferIndex;
 	private int mCurrentAdapterIndex;
 	private int mSideBuffer = 2;
@@ -121,6 +122,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private void init() {
 		mLoadedViews = new LinkedList<View>();
+		mRecycledViews = new LinkedList<View>();
 		mScroller = new Scroller(getContext());
 		final ViewConfiguration configuration = ViewConfiguration
 				.get(getContext());
@@ -506,6 +508,22 @@ public class ViewFlow extends AdapterView<Adapter> {
 		mIndicator.setViewFlow(this);
 	}
 
+	protected void recycleViews() {
+		while (!mLoadedViews.isEmpty())
+			recycleView(mLoadedViews.remove());
+	}
+
+	protected void recycleView(View v) {
+		if (v == null)
+			return;
+		mRecycledViews.add(v);
+		detachViewFromParent(v);
+	}
+
+	protected View getRecycledView() {
+		return (mRecycledViews.isEmpty() ? null : mRecycledViews.remove(0));
+	}
+
 	@Override
 	public void setSelection(int position) {
 		mNextScreen = INVALID_SCREEN;
@@ -514,36 +532,25 @@ public class ViewFlow extends AdapterView<Adapter> {
 			return;
 		
 		position = Math.max(position, 0);
-		position =  Math.min(position, mAdapter.getCount()-1);
+		position = Math.min(position, mAdapter.getCount()-1);
 
-		ArrayList<View> recycleViews = new ArrayList<View>();
-		View recycleView;
-		while (!mLoadedViews.isEmpty()) {
-			recycleViews.add(recycleView = mLoadedViews.remove());
-			detachViewFromParent(recycleView);
-		}
+		recycleViews();
 
-		View currentView = makeAndAddView(position, true,
-				(recycleViews.isEmpty() ? null : recycleViews.remove(0)));
+		View currentView = makeAndAddView(position, true);
 		mLoadedViews.addLast(currentView);
 		
 		for(int offset = 1; mSideBuffer - offset >= 0; offset++) {
 			int leftIndex = position - offset;
 			int rightIndex = position + offset;
 			if(leftIndex >= 0)
-				mLoadedViews.addFirst(makeAndAddView(leftIndex, false,
-						(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
+				mLoadedViews.addFirst(makeAndAddView(leftIndex, false));
 			if(rightIndex < mAdapter.getCount())
-				mLoadedViews.addLast(makeAndAddView(rightIndex, true,
-						(recycleViews.isEmpty() ? null : recycleViews.remove(0))));
+				mLoadedViews.addLast(makeAndAddView(rightIndex, true));
 		}
 
 		mCurrentBufferIndex = mLoadedViews.indexOf(currentView);
 		mCurrentAdapterIndex = position;
 
-		for (View view : recycleViews) {
-			removeDetachedView(view, false);
-		}
 		requestLayout();
 		setVisibleView(mCurrentBufferIndex, false);
 		if (mIndicator != null) {
@@ -559,13 +566,13 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private void resetFocus() {
 		logBuffer();
-		mLoadedViews.clear();
+		recycleViews();
 		removeAllViewsInLayout();
 
 		for (int i = Math.max(0, mCurrentAdapterIndex - mSideBuffer); i < Math
 				.min(mAdapter.getCount(), mCurrentAdapterIndex + mSideBuffer
 						+ 1); i++) {
-			mLoadedViews.addLast(makeAndAddView(i, true, null));
+			mLoadedViews.addLast(makeAndAddView(i, true));
 			if (i == mCurrentAdapterIndex)
 				mCurrentBufferIndex = mLoadedViews.size() - 1;
 		}
@@ -581,38 +588,30 @@ public class ViewFlow extends AdapterView<Adapter> {
 			mCurrentAdapterIndex++;
 			mCurrentBufferIndex++;
 
-			View recycleView = null;
-
-			// Remove view outside buffer range
+			// Recycle view outside buffer range
 			if (mCurrentAdapterIndex > mSideBuffer) {
-				recycleView = mLoadedViews.removeFirst();
-				detachViewFromParent(recycleView);
-				// removeView(recycleView);
+				recycleView(mLoadedViews.removeFirst());
 				mCurrentBufferIndex--;
 			}
 
 			// Add new view to buffer
 			int newBufferIndex = mCurrentAdapterIndex + mSideBuffer;
 			if (newBufferIndex < mAdapter.getCount())
-				mLoadedViews.addLast(makeAndAddView(newBufferIndex, true,
-						recycleView));
+				mLoadedViews.addLast(makeAndAddView(newBufferIndex, true));
 
 		} else { // to the left
 			mCurrentAdapterIndex--;
 			mCurrentBufferIndex--;
-			View recycleView = null;
 
-			// Remove view outside buffer range
+			// Recycle view outside buffer range
 			if (mAdapter.getCount() - 1 - mCurrentAdapterIndex > mSideBuffer) {
-				recycleView = mLoadedViews.removeLast();
-				detachViewFromParent(recycleView);
+				recycleView(mLoadedViews.removeLast());
 			}
 
 			// Add new view to buffer
 			int newBufferIndex = mCurrentAdapterIndex - mSideBuffer;
 			if (newBufferIndex > -1) {
-				mLoadedViews.addFirst(makeAndAddView(newBufferIndex, false,
-						recycleView));
+				mLoadedViews.addFirst(makeAndAddView(newBufferIndex, false));
 				mCurrentBufferIndex++;
 			}
 
@@ -647,6 +646,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		return child;
 	}
 
+	private View makeAndAddView(int position, boolean addToEnd) {
+		return makeAndAddView(position, addToEnd, getRecycledView());
+	}
+
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
 		return setupChild(view, addToEnd, convertView != null);
@@ -678,7 +681,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private void logBuffer() {
 
 		Log.d("viewflow", "Size of mLoadedViews: " + mLoadedViews.size() +
-				"X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
+				", Size of mRecycledViews: " + mRecycledViews.size() +
+				", X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
 		Log.d("viewflow", "IndexInAdapter: " + mCurrentAdapterIndex
 				+ ", IndexInBuffer: " + mCurrentBufferIndex);
 	}
