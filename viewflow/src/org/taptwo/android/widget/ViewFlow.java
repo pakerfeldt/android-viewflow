@@ -15,7 +15,7 @@
  */
 package org.taptwo.android.widget;
 
-import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedList;
 
 import org.taptwo.android.widget.viewflow.R;
@@ -68,8 +68,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private boolean mFirstLayout = true;
 	private ViewSwitchListener mViewSwitchListener;
 	private ViewLazyInitializeListener mViewInitializeListener;
-	private boolean mViewInitializeLeft = false;
-	private boolean mViewInitializeRight = false;
+	private EnumSet<LazyInit> mLazyInit = EnumSet.allOf(LazyInit.class);
 	private Adapter mAdapter;
 	private int mLastScrollDirection;
 	private AdapterDataSetObserver mDataSetObserver;
@@ -105,6 +104,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	public static interface ViewLazyInitializeListener {
 		void onViewLazyInitialize(View view, int position);
+	}
+
+	enum LazyInit {
+		LEFT, RIGHT
 	}
 
 	public ViewFlow(Context context) {
@@ -392,14 +395,14 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private void initializeView(final float direction) {
 		if (direction > 0) {
-			if (!mViewInitializeRight) {
-				mViewInitializeRight = true;
+			if (mLazyInit.contains(LazyInit.RIGHT)) {
+				mLazyInit.remove(LazyInit.RIGHT);
 				if (mCurrentBufferIndex+1 < mLoadedViews.size())
 					mViewInitializeListener.onViewLazyInitialize(mLoadedViews.get(mCurrentBufferIndex + 1), mCurrentAdapterIndex + 1);
 			}
 		} else {
-			if (!mViewInitializeLeft) {
-				mViewInitializeLeft = true;
+			if (mLazyInit.contains(LazyInit.LEFT)) {
+				mLazyInit.remove(LazyInit.LEFT);
 				if (mCurrentBufferIndex > 0)
 					mViewInitializeListener.onViewLazyInitialize(mLoadedViews.get(mCurrentBufferIndex - 1), mCurrentAdapterIndex - 1);
 			}
@@ -601,7 +604,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		logBuffer();
 		recycleViews();
 		removeAllViewsInLayout();
-		mViewInitializeLeft = mViewInitializeRight = false;
+		mLazyInit.addAll(EnumSet.allOf(LazyInit.class));
 
 		for (int i = Math.max(0, mCurrentAdapterIndex - mSideBuffer); i < Math
 				.min(mAdapter.getCount(), mCurrentAdapterIndex + mSideBuffer
@@ -624,8 +627,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		if (direction > 0) { // to the right
 			mCurrentAdapterIndex++;
 			mCurrentBufferIndex++;
-			mViewInitializeRight = false;
-			mViewInitializeLeft = true;
+			mLazyInit.remove(LazyInit.LEFT);
+			mLazyInit.add(LazyInit.RIGHT);
 
 			// Recycle view outside buffer range
 			if (mCurrentAdapterIndex > mSideBuffer) {
@@ -641,8 +644,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		} else { // to the left
 			mCurrentAdapterIndex--;
 			mCurrentBufferIndex--;
-			mViewInitializeLeft = false;
-			mViewInitializeRight = true;
+			mLazyInit.add(LazyInit.LEFT);
+			mLazyInit.remove(LazyInit.RIGHT);
 
 			// Recycle view outside buffer range
 			if (mAdapter.getCount() - 1 - mCurrentAdapterIndex > mSideBuffer) {
