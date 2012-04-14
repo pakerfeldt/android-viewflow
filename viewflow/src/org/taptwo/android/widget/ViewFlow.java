@@ -67,6 +67,9 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private int mNextScreen = INVALID_SCREEN;
 	private boolean mFirstLayout = true;
 	private ViewSwitchListener mViewSwitchListener;
+	private ViewLazyInitializeListener mViewInitializeListener;
+	private boolean mViewInitializeLeft = false;
+	private boolean mViewInitializeRight = false;
 	private Adapter mAdapter;
 	private int mLastScrollDirection;
 	private AdapterDataSetObserver mDataSetObserver;
@@ -98,6 +101,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		 */
 		void onSwitched(View view, int position);
 
+	}
+
+	public static interface ViewLazyInitializeListener {
+		void onViewLazyInitialize(View view, int position);
 	}
 
 	public ViewFlow(Context context) {
@@ -218,18 +225,21 @@ public class ViewFlow extends AdapterView<Adapter> {
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			final int xDiff = (int) Math.abs(x - mLastMotionX);
+			final int deltaX = (int) (mLastMotionX - x);
 
-			boolean xMoved = xDiff > mTouchSlop;
+			boolean xMoved = Math.abs(deltaX) > mTouchSlop;
 
 			if (xMoved) {
 				// Scroll if the user moved far enough along the X axis
 				mTouchState = TOUCH_STATE_SCROLLING;
+
+				if (mViewInitializeListener != null)
+					initializeView(deltaX);
 			}
 
 			if (mTouchState == TOUCH_STATE_SCROLLING) {
 				// Scroll to follow the motion event
-				final int deltaX = (int) (mLastMotionX - x);
+
 				mLastMotionX = x;
 
 				final int scrollX = getScrollX();
@@ -313,18 +323,21 @@ public class ViewFlow extends AdapterView<Adapter> {
 			break;
 
 		case MotionEvent.ACTION_MOVE:
-			final int xDiff = (int) Math.abs(x - mLastMotionX);
+			final int deltaX = (int) (mLastMotionX - x);
 
-			boolean xMoved = xDiff > mTouchSlop;
+			boolean xMoved = Math.abs(deltaX) > mTouchSlop;
 
 			if (xMoved) {
 				// Scroll if the user moved far enough along the X axis
 				mTouchState = TOUCH_STATE_SCROLLING;
+
+				if (mViewInitializeListener != null)
+					initializeView(deltaX);
 			}
 
 			if (mTouchState == TOUCH_STATE_SCROLLING) {
 				// Scroll to follow the motion event
-				final int deltaX = (int) (mLastMotionX - x);
+
 				mLastMotionX = x;
 
 				final int scrollX = getScrollX();
@@ -375,6 +388,22 @@ public class ViewFlow extends AdapterView<Adapter> {
 			mTouchState = TOUCH_STATE_REST;
 		}
 		return true;
+	}
+
+	private void initializeView(final float direction) {
+		if (direction > 0) {
+			if (!mViewInitializeRight) {
+				mViewInitializeRight = true;
+				if (mCurrentBufferIndex+1 < mLoadedViews.size())
+					mViewInitializeListener.onViewLazyInitialize(mLoadedViews.get(mCurrentBufferIndex + 1), mCurrentAdapterIndex + 1);
+			}
+		} else {
+			if (!mViewInitializeLeft) {
+				mViewInitializeLeft = true;
+				if (mCurrentBufferIndex > 0)
+					mViewInitializeListener.onViewLazyInitialize(mLoadedViews.get(mCurrentBufferIndex - 1), mCurrentAdapterIndex - 1);
+			}
+		}
 	}
 
 	@Override
@@ -459,6 +488,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		mViewSwitchListener = l;
 	}
 
+	public void setOnViewLazyInitializeListener(ViewLazyInitializeListener l) {
+		mViewInitializeListener = l;
+	}
+
 	@Override
 	public Adapter getAdapter() {
 		return mAdapter;
@@ -538,7 +571,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 		View currentView = makeAndAddView(position, true);
 		mLoadedViews.addLast(currentView);
-		
+
+		if (mViewInitializeListener != null)
+			mViewInitializeListener.onViewLazyInitialize(currentView, position);
+
 		for(int offset = 1; mSideBuffer - offset >= 0; offset++) {
 			int leftIndex = position - offset;
 			int rightIndex = position + offset;
@@ -554,13 +590,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 		requestLayout();
 		setVisibleView(mCurrentBufferIndex, false);
 		if (mIndicator != null) {
-			mIndicator.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
-					mCurrentAdapterIndex);
+			mIndicator.onSwitched(currentView, mCurrentAdapterIndex);
 		}
 		if (mViewSwitchListener != null) {
-			mViewSwitchListener
-					.onSwitched(mLoadedViews.get(mCurrentBufferIndex),
-							mCurrentAdapterIndex);
+			mViewSwitchListener.onSwitched(currentView, mCurrentAdapterIndex);
 		}
 	}
 
@@ -568,13 +601,17 @@ public class ViewFlow extends AdapterView<Adapter> {
 		logBuffer();
 		recycleViews();
 		removeAllViewsInLayout();
+		mViewInitializeLeft = mViewInitializeRight = false;
 
 		for (int i = Math.max(0, mCurrentAdapterIndex - mSideBuffer); i < Math
 				.min(mAdapter.getCount(), mCurrentAdapterIndex + mSideBuffer
 						+ 1); i++) {
 			mLoadedViews.addLast(makeAndAddView(i, true));
-			if (i == mCurrentAdapterIndex)
+			if (i == mCurrentAdapterIndex) {
 				mCurrentBufferIndex = mLoadedViews.size() - 1;
+				if (mViewInitializeListener != null)
+					mViewInitializeListener.onViewLazyInitialize(mLoadedViews.getLast(), mCurrentAdapterIndex);
+			}
 		}
 		logBuffer();
 		requestLayout();
@@ -587,6 +624,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		if (direction > 0) { // to the right
 			mCurrentAdapterIndex++;
 			mCurrentBufferIndex++;
+			mViewInitializeRight = false;
+			mViewInitializeLeft = true;
 
 			// Recycle view outside buffer range
 			if (mCurrentAdapterIndex > mSideBuffer) {
@@ -602,6 +641,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 		} else { // to the left
 			mCurrentAdapterIndex--;
 			mCurrentBufferIndex--;
+			mViewInitializeLeft = false;
+			mViewInitializeRight = true;
 
 			// Recycle view outside buffer range
 			if (mAdapter.getCount() - 1 - mCurrentAdapterIndex > mSideBuffer) {
