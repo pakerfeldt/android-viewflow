@@ -40,6 +40,17 @@ If you need to listen to screen change events you would want to implement your o
         }
     });
 
+### Listen on initialize view events
+
+If you need a lazy View initialization you would want to implement your own `ViewFlow.ViewLazyInitializeListener` and pass it to the `setOnViewLazyInitializeListener()` method.
+
+    viewFlow.setOnViewLazyInitializeListener(new ViewLazyInitializeListener() {
+        public void onViewLazyInitialize(View view, int position) {
+            // Your code here e.g.
+            ((MyAdapter)((AbsListView)view).getAdapter()).initializeData();
+        }
+    });
+
 ### Flow Indicator
 It is also possible to add a flow view indicator to your layout. The purpose of a `FlowIndicator` is to present a visual representation of where in the item list focus is at. You may either implement a `FlowIndicator` yourself or use an implementation provided by the View Flow library. The View Flow library currently supports the following indicators:
 
