@@ -696,7 +696,9 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
-		return setupChild(view, addToEnd, convertView != null);
+		if(view != convertView)
+			mRecycledViews.add(convertView);
+		return setupChild(view, addToEnd, view == convertView);
 	}
 
 	class AdapterDataSetObserver extends DataSetObserver {
