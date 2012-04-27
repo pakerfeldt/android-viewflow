@@ -15,6 +15,7 @@
  */
 package org.taptwo.android.widget;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedList;
 
@@ -32,7 +33,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Scroller;
@@ -52,8 +52,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private final static int TOUCH_STATE_REST = 0;
 	private final static int TOUCH_STATE_SCROLLING = 1;
 
+	private RecycleBin mRecycleBin = new RecycleBin();
 	private LinkedList<View> mLoadedViews;
-	private LinkedList<View> mRecycledViews;
 	private int mCurrentBufferIndex;
 	private int mCurrentAdapterIndex;
 	private int mSideBuffer = 2;
@@ -132,7 +132,6 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private void init() {
 		mLoadedViews = new LinkedList<View>();
-		mRecycledViews = new LinkedList<View>();
 		mScroller = new Scroller(getContext());
 		final ViewConfiguration configuration = ViewConfiguration
 				.get(getContext());
@@ -512,6 +511,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 		mAdapter = adapter;
 
+        mRecycleBin.setViewTypeCount(mAdapter.getViewTypeCount());
+
 		if (mAdapter != null) {
 			mDataSetObserver = new AdapterDataSetObserver();
 			mAdapter.registerDataSetObserver(mDataSetObserver);
@@ -546,18 +547,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	protected void recycleViews() {
 		while (!mLoadedViews.isEmpty())
-			recycleView(mLoadedViews.remove());
-	}
-
-	protected void recycleView(View v) {
-		if (v == null)
-			return;
-		mRecycledViews.add(v);
-		detachViewFromParent(v);
-	}
-
-	protected View getRecycledView() {
-		return (mRecycledViews.isEmpty() ? null : mRecycledViews.remove(0));
+			mRecycleBin.recycleView(mLoadedViews.remove());
 	}
 
 	@Override
@@ -632,7 +622,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 			// Recycle view outside buffer range
 			if (mCurrentAdapterIndex > mSideBuffer) {
-				recycleView(mLoadedViews.removeFirst());
+				mRecycleBin.recycleView(mLoadedViews.removeFirst());
 				mCurrentBufferIndex--;
 			}
 
@@ -649,7 +639,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 			// Recycle view outside buffer range
 			if (mAdapter.getCount() - 1 - mCurrentAdapterIndex > mSideBuffer) {
-				recycleView(mLoadedViews.removeLast());
+				mRecycleBin.recycleView(mLoadedViews.removeLast());
 			}
 
 			// Add new view to buffer
@@ -675,14 +665,15 @@ public class ViewFlow extends AdapterView<Adapter> {
 		logBuffer();
 	}
 
-	private View setupChild(View child, boolean addToEnd, boolean recycle) {
-		ViewGroup.LayoutParams p = (ViewGroup.LayoutParams) child
+	private View setupChild(View child, int viewType, boolean addToEnd, boolean recycle) {
+		ViewFlow.LayoutParams p = (ViewFlow.LayoutParams) child
 				.getLayoutParams();
 		if (p == null) {
-			p = new AbsListView.LayoutParams(
+			p = new ViewFlow.LayoutParams(
 					ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT, 0);
 		}
+		p.viewType = viewType;
 		if (recycle)
 			attachViewToParent(child, (addToEnd ? -1 : 0), p);
 		else
@@ -691,14 +682,20 @@ public class ViewFlow extends AdapterView<Adapter> {
 	}
 
 	private View makeAndAddView(int position, boolean addToEnd) {
-		return makeAndAddView(position, addToEnd, getRecycledView());
+		return makeAndAddView(position, addToEnd, mRecycleBin.getRecycledView(position));
 	}
 
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
-		if(view != convertView)
-			mRecycledViews.add(convertView);
-		return setupChild(view, addToEnd, view == convertView);
+		if(convertView != null && view != convertView)
+			mRecycleBin.recycleView(convertView);
+		return setupChild(view, mAdapter.getItemViewType(position), addToEnd, view == convertView);
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		mRecycleBin.clear();
 	}
 
 	class AdapterDataSetObserver extends DataSetObserver {
@@ -724,10 +721,152 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	}
 
+	/**
+	  * ViewFlow extends LayoutParams to provide a place to hold the view type.
+	  */
+	 public static class LayoutParams extends ViewGroup.LayoutParams {
+	     /**
+	      * View type for this view, as returned by
+	      * {@link android.widget.Adapter#getItemViewType(int) }
+	      */
+	     int viewType;
+
+	     /**
+	      * The position the view was removed from when pulled out of the
+	      * scrap heap.
+	      * @hide
+	      */
+	     int scrappedFromPosition;
+
+	     public LayoutParams(Context c, AttributeSet attrs) {
+	         super(c, attrs);
+	     }
+
+	     public LayoutParams(int w, int h) {
+	         super(w, h);
+	     }
+
+	     public LayoutParams(int w, int h, int viewType) {
+	         super(w, h);
+	         this.viewType = viewType;
+	     }
+
+	     public LayoutParams(ViewGroup.LayoutParams source) {
+	         super(source);
+	     }
+
+	     public LayoutParams(ViewGroup.LayoutParams source, int viewType) {
+	         super(source);
+	         this.viewType = viewType;
+	     }
+	 }
+	
+	 class RecycleBin {
+		 
+	        /**
+	         * Unsorted views that can be used by the adapter as a convert view.
+	         */
+	        private ArrayList<View>[] mScrapViews;
+	        
+	        private ArrayList<View> mCurrentScrap;
+	        
+	        private int mViewTypeCount;
+
+	        public void setViewTypeCount(int viewTypeCount) {
+	            if (viewTypeCount < 1) {
+	                throw new IllegalArgumentException("Can't have a viewTypeCount < 1");
+	            }
+
+	            ArrayList<View>[] scrapViews = new ArrayList[viewTypeCount];
+	            for (int i = 0; i < viewTypeCount; i++) {
+	                scrapViews[i] = new ArrayList<View>();
+	            }
+	            mViewTypeCount = viewTypeCount;
+	            mCurrentScrap = scrapViews[0];
+	            mScrapViews = scrapViews;
+	        }
+	        
+	        /**
+	         * Put a view into the ScapViews list. These views are unordered.
+	         *
+	         * @param scrap The view to add
+	         */
+	        void recycleView(View scrap/*, int position*/) {
+	            ViewFlow.LayoutParams lp = (ViewFlow.LayoutParams) scrap.getLayoutParams();
+	            if (lp == null) {
+	                return;
+	            }
+
+	            int viewType = lp.viewType;
+
+//	            lp.scrappedFromPosition = position;
+	            if(scrap.getParent() != null)
+	            	detachViewFromParent(scrap);
+
+                if (mViewTypeCount == 1) {
+	                mCurrentScrap.add(scrap);
+	            } else {
+	                mScrapViews[viewType].add(scrap);
+	            }
+
+	        }
+	        
+	        View getRecycledView(int position) {
+	            if (mViewTypeCount == 1) {
+	                return retrieveFromScrap(mCurrentScrap, position);
+	            } else {
+	                int whichScrap = mAdapter.getItemViewType(position);
+	                if (whichScrap >= 0 && whichScrap < mScrapViews.length) {
+	                    return retrieveFromScrap(mScrapViews[whichScrap], position);
+	                }
+	            }
+	            return null;
+	        }
+	        
+	        /**
+	         * Clears the scrap heap.
+	         */
+	        void clear() {
+	            if (mViewTypeCount == 1) {
+	                final ArrayList<View> scrap = mCurrentScrap;
+	                final int scrapCount = scrap.size();
+	                for (int i = 0; i < scrapCount; i++) {
+	                    removeDetachedView(scrap.remove(scrapCount - 1 - i), false);
+	                }
+	            } else {
+	                final int typeCount = mViewTypeCount;
+	                for (int i = 0; i < typeCount; i++) {
+	                    final ArrayList<View> scrap = mScrapViews[i];
+	                    final int scrapCount = scrap.size();
+	                    for (int j = 0; j < scrapCount; j++) {
+	                        removeDetachedView(scrap.remove(scrapCount - 1 - j), false);
+	                    }
+	                }
+	            }
+	        }
+	        
+	 }
+	 
+	    static View retrieveFromScrap(ArrayList<View> scrapViews, int position) {
+	        int size = scrapViews.size();
+	        if (size > 0) {
+	            // See if we still have a view for this position.
+	            for (int i=0; i<size; i++) {
+	                View view = scrapViews.get(i);
+	                if (((ViewFlow.LayoutParams)view.getLayoutParams())
+	                        .scrappedFromPosition == position) {
+	                    scrapViews.remove(i);
+	                    return view;
+	                }
+	            }
+	            return scrapViews.remove(size - 1);
+	        } else {
+	            return null;
+	        }
+	    }
 	private void logBuffer() {
 
 		Log.d("viewflow", "Size of mLoadedViews: " + mLoadedViews.size() +
-				", Size of mRecycledViews: " + mRecycledViews.size() +
 				", X: " + mScroller.getCurrX() + ", Y: " + mScroller.getCurrY());
 		Log.d("viewflow", "IndexInAdapter: " + mCurrentAdapterIndex
 				+ ", IndexInBuffer: " + mCurrentBufferIndex);
