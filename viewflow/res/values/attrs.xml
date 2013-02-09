@@ -22,6 +22,7 @@
         <attr name="activeColor" format="color" />
         <attr name="inactiveColor" format="color" />
         <attr name="radius" format="dimension" />
+        <attr name="spacing" format="dimension" />
 		<attr name="centered" format="boolean" />
 		<attr name="fadeOut" format="integer" />
 		<attr name="inactiveType">
