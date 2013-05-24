@@ -129,6 +129,28 @@ public class ViewFlow extends AdapterView<Adapter> {
 		mSideBuffer = styledAttrs.getInt(R.styleable.ViewFlow_sidebuffer, 3);
 		init();
 	}
+	
+	/**
+	 * DisPlay Next View，If at the last one will be the first one to slide show
+	 */
+	public void showNext() {
+	    	if (mCurrentScreen == getChildCount() - 1) {
+	        	snapToScreen(0);
+	    	} else {
+	        	snapToScreen(mCurrentScreen + 1);
+	    	}
+	}
+	
+	/**
+     	  * DisPlay Previous View，If at the frist one will be the last one to slide show
+         */
+	public void showPrevious() {
+		if (mCurrentScreen == 0) {
+                	snapToScreen(getChildCount()-1);
+            	} else {
+            		snapToScreen(mCurrentScreen - 1);
+        	}
+        }
 
 	private void init() {
 		mLoadedViews = new LinkedList<View>();
@@ -625,8 +647,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 			return;
 
 		if (direction > 0) { // to the right
-			mCurrentAdapterIndex++;
-			mCurrentBufferIndex++;
+			mCurrentAdapterIndex+=direction;
+			mCurrentBufferIndex+=direction;
 			mLazyInit.remove(LazyInit.LEFT);
 			mLazyInit.add(LazyInit.RIGHT);
 
@@ -642,8 +664,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 				mLoadedViews.addLast(makeAndAddView(newBufferIndex, true));
 
 		} else { // to the left
-			mCurrentAdapterIndex--;
-			mCurrentBufferIndex--;
+			mCurrentAdapterIndex+=direction;
+			mCurrentBufferIndex+=direction;
 			mLazyInit.add(LazyInit.LEFT);
 			mLazyInit.remove(LazyInit.RIGHT);
 
