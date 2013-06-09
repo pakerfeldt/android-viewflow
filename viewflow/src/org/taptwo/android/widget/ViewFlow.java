@@ -552,12 +552,12 @@ public class ViewFlow extends AdapterView<Adapter> {
 	protected void recycleView(View v) {
 		if (v == null)
 			return;
-		mRecycledViews.add(v);
+		mRecycledViews.addFirst(v);
 		detachViewFromParent(v);
 	}
 
 	protected View getRecycledView() {
-		return (mRecycledViews.isEmpty() ? null : mRecycledViews.remove(0));
+		return (mRecycledViews.isEmpty() ? null : mRecycledViews.remove());
 	}
 
 	@Override
@@ -696,7 +696,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
 		View view = mAdapter.getView(position, convertView, this);
-		if(view != convertView)
+		if(view != convertView && convertView != null)
 			mRecycledViews.add(convertView);
 		return setupChild(view, addToEnd, view == convertView);
 	}
