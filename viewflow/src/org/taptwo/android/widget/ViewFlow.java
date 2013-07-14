@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *		http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,27 +15,21 @@
  */
 package org.taptwo.android.widget;
 
-import java.util.EnumSet;
-import java.util.LinkedList;
-
-import org.taptwo.android.widget.viewflow.R;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Scroller;
+import org.taptwo.android.widget.viewflow.R;
+
+import java.util.EnumSet;
+import java.util.LinkedList;
 
 /**
  * A horizontally scrollable {@link ViewGroup} with items populated from an
@@ -74,6 +68,9 @@ public class ViewFlow extends AdapterView<Adapter> {
 	private AdapterDataSetObserver mDataSetObserver;
 	private FlowIndicator mIndicator;
 	private int mLastOrientation = -1;
+	/** Extra return value from obtainView: tells you whether the item it returned on the last call was recycled rather than created by the adapter.
+	 * This is a member because getting a second return value requires an allocation. */
+	private boolean mLastObtainedViewWasRecycled = false;
 
 	private OnGlobalLayoutListener orientationChangeListener = new OnGlobalLayoutListener() {
 
@@ -94,9 +91,9 @@ public class ViewFlow extends AdapterView<Adapter> {
 		 * This method is called when a new View has been scrolled to.
 		 * 
 		 * @param view
-		 *            the {@link View} currently in focus.
+		 *			  the {@link View} currently in focus.
 		 * @param position
-		 *            The position in the adapter of the {@link View} currently in focus.
+		 *			  The position in the adapter of the {@link View} currently in focus.
 		 */
 		void onSwitched(View view, int position);
 
@@ -153,44 +150,90 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		
-		final int width = MeasureSpec.getSize(widthMeasureSpec);
+		int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+		int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 		final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-		if (widthMode != MeasureSpec.EXACTLY && !isInEditMode()) {
-			throw new IllegalStateException(
-					"ViewFlow can only be used in EXACTLY mode.");
-		}
-
 		final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-		if (heightMode != MeasureSpec.EXACTLY && !isInEditMode()) {
-			throw new IllegalStateException(
-					"ViewFlow can only be used in EXACTLY mode.");
+
+		int childWidth = 0;
+		int childHeight = 0;
+		int childState = 0;
+
+		final int widthPadding = getWidthPadding();
+		final int heightPadding = getHeightPadding();
+
+		int count = mAdapter == null ? 0 : mAdapter.getCount();
+		if (count > 0 && (widthMode == MeasureSpec.UNSPECIFIED || widthMode == MeasureSpec.AT_MOST ||
+				heightMode == MeasureSpec.UNSPECIFIED)) {
+			final View child = obtainView(0);
+
+			int childTargetWidthSpec = widthMeasureSpec;
+			if (widthMode == MeasureSpec.AT_MOST) {
+				int childTargetSize = widthSize - widthPadding;
+				childTargetWidthSpec = MeasureSpec.makeMeasureSpec(childTargetSize, MeasureSpec.AT_MOST);
+			}
+			child.measure(childTargetWidthSpec, heightMeasureSpec);
+			childWidth = child.getMeasuredWidth();
+			childHeight = child.getMeasuredHeight();
+			childState = child.getMeasuredState();
+			mRecycledViews.add(child);
+		}
+		if (widthMode == MeasureSpec.UNSPECIFIED) {
+			widthSize = childWidth + widthPadding;
+		} else if (widthMode == MeasureSpec.AT_MOST) {
+			widthSize = childWidth + widthPadding;
+			widthSize = resolveSizeAndState(widthSize, widthMeasureSpec, childState);
 		}
 
-		// The children are given the same width and height as the workspace
-		final int count = getChildCount();
-		for (int i = 0; i < count; i++) {
-			getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec);
+		if (heightMode == MeasureSpec.UNSPECIFIED) {
+			heightSize = heightPadding + childHeight;
+		} else {
+			heightSize |= (childState&MEASURED_STATE_MASK);
 		}
+
+		setMeasuredDimension(widthSize, heightSize);
+	}
+
+	private int getWidthPadding() {
+		return getPaddingLeft() + getPaddingRight() + getHorizontalFadingEdgeLength() * 2;
+	}
+
+	private int getChildWidth() {
+		return getWidth() - getWidthPadding();
+	}
+
+	private int getHeightPadding() {
+		return getPaddingTop() + getPaddingBottom();
+	}
+
+	private int getChildHeight() {
+		return getHeight() - getHeightPadding();
+	}
+
+	@Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+
+		measureChildren(
+				MeasureSpec.makeMeasureSpec(w - getWidthPadding(), MeasureSpec.AT_MOST),
+				MeasureSpec.makeMeasureSpec(h - getHeightPadding(), MeasureSpec.AT_MOST));
 
 		if (mFirstLayout) {
-			mScroller.startScroll(0, 0, mCurrentScreen * width, 0, 0);
+			mScroller.startScroll(0, 0, mCurrentScreen * w, 0, 0);
 			mFirstLayout = false;
 		}
 	}
 
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
-		int childLeft = 0;
+		int childLeft = getPaddingLeft() + getHorizontalFadingEdgeLength();
 
 		final int count = getChildCount();
 		for (int i = 0; i < count; i++) {
 			final View child = getChildAt(i);
 			if (child.getVisibility() != View.GONE) {
 				final int childWidth = child.getMeasuredWidth();
-				child.layout(childLeft, 0, childLeft + childWidth,
-						child.getMeasuredHeight());
+				child.layout(childLeft, getPaddingTop(), childLeft + childWidth,
+						getPaddingTop() + child.getMeasuredHeight());
 				childLeft += childWidth;
 			}
 		}
@@ -253,7 +296,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 				} else if (deltaX > 0) {
 					final int availableToScroll = getChildAt(
 							getChildCount() - 1).getRight()
-							- scrollX - getWidth();
+							- scrollX - getChildWidth();
 					if (availableToScroll > 0) {
 						scrollBy(Math.min(availableToScroll, deltaX), 0);
 					}
@@ -351,7 +394,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 				} else if (deltaX > 0) {
 					final int availableToScroll = getChildAt(
 							getChildCount() - 1).getRight()
-							- scrollX - getWidth();
+							- scrollX - getChildWidth();
 					if (availableToScroll > 0) {
 						scrollBy(Math.min(availableToScroll, deltaX), 0);
 					}
@@ -419,13 +462,13 @@ public class ViewFlow extends AdapterView<Adapter> {
 			 * horizontal scroll origin here, since we use a view buffer.
 			 */
 			int hPerceived = h + (mCurrentAdapterIndex - mCurrentBufferIndex)
-					* getWidth();
+					* getChildWidth();
 			mIndicator.onScrolled(hPerceived, v, oldh, oldv);
 		}
 	}
 
 	private void snapToDestination() {
-		final int screenWidth = getWidth();
+		final int screenWidth = getChildWidth();
 		final int whichScreen = (getScrollX() + (screenWidth / 2))
 				/ screenWidth;
 
@@ -441,7 +484,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 		mNextScreen = whichScreen;
 
-		final int newX = whichScreen * getWidth();
+		final int newX = whichScreen * getChildWidth();
 		final int delta = newX - getScrollX();
 		mScroller.startScroll(getScrollX(), 0, delta, 0, Math.abs(delta) * 2);
 		invalidate();
@@ -464,12 +507,12 @@ public class ViewFlow extends AdapterView<Adapter> {
 	 * Scroll to the {@link View} in the view buffer specified by the index.
 	 * 
 	 * @param indexInBuffer
-	 *            Index of the view in the view buffer.
+	 *			  Index of the view in the view buffer.
 	 */
 	private void setVisibleView(int indexInBuffer, boolean uiThread) {
 		mCurrentScreen = Math.max(0,
 				Math.min(indexInBuffer, getChildCount() - 1));
-		int dx = (mCurrentScreen * getWidth()) - mScroller.getCurrX();
+		int dx = (mCurrentScreen * getChildWidth()) - mScroller.getCurrX();
 		mScroller.startScroll(mScroller.getCurrX(), mScroller.getCurrY(), dx,
 				0, 0);
 		if(dx == 0)
@@ -485,7 +528,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 	 * ViewFlow} scrolls.
 	 * 
 	 * @param l
-	 *            the scroll listener
+	 *			  the scroll listener
 	 */
 	public void setOnViewSwitchListener(ViewSwitchListener l) {
 		mViewSwitchListener = l;
@@ -529,10 +572,10 @@ public class ViewFlow extends AdapterView<Adapter> {
 				.get(mCurrentBufferIndex) : null);
 	}
 
-    @Override
-    public int getSelectedItemPosition() {
-        return mCurrentAdapterIndex;
-    }
+	@Override
+	public int getSelectedItemPosition() {
+		return mCurrentAdapterIndex;
+	}
 
 	/**
 	 * Set the FlowIndicator
@@ -675,30 +718,44 @@ public class ViewFlow extends AdapterView<Adapter> {
 		logBuffer();
 	}
 
+	@Override protected void measureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
+		final LayoutParams lp = child.getLayoutParams();
+		assert lp != null;
+		lp.height = getChildHeight();
+		lp.width = getChildWidth();
+		final int childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
+		final int childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+		child.measure(childWidthSpec, childHeightSpec);
+	}
+
 	private View setupChild(View child, boolean addToEnd, boolean recycle) {
-		ViewGroup.LayoutParams p = (ViewGroup.LayoutParams) child
-				.getLayoutParams();
-		if (p == null) {
-			p = new AbsListView.LayoutParams(
-					ViewGroup.LayoutParams.FILL_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT, 0);
-		}
+		final LayoutParams lp = child.getLayoutParams();
+		assert lp != null;
+		measureChild(child, 0, 0);
 		if (recycle)
-			attachViewToParent(child, (addToEnd ? -1 : 0), p);
+			attachViewToParent(child, (addToEnd ? -1 : 0), lp);
 		else
-			addViewInLayout(child, (addToEnd ? -1 : 0), p, true);
+			addViewInLayout(child, (addToEnd ? -1 : 0), lp, true);
 		return child;
 	}
 
 	private View makeAndAddView(int position, boolean addToEnd) {
-		return makeAndAddView(position, addToEnd, getRecycledView());
+		View view = obtainView(position);
+		return setupChild(view, addToEnd, mLastObtainedViewWasRecycled);
 	}
 
-	private View makeAndAddView(int position, boolean addToEnd, View convertView) {
+	private View obtainView(int position) {
+		View convertView = getRecycledView();
 		View view = mAdapter.getView(position, convertView, this);
 		if(view != convertView && convertView != null)
 			mRecycledViews.add(convertView);
-		return setupChild(view, addToEnd, view == convertView);
+		mLastObtainedViewWasRecycled = (view == convertView);
+		ViewGroup.LayoutParams p = view.getLayoutParams();
+		if (p == null) {
+			p = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			view.setLayoutParams(p);
+		}
+		return view;
 	}
 
 	class AdapterDataSetObserver extends DataSetObserver {
