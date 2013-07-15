@@ -499,7 +499,11 @@ public class ViewFlow extends AdapterView<Adapter> {
 			mCurrentScreen = Math.max(0,
 					Math.min(mNextScreen, getChildCount() - 1));
 			mNextScreen = INVALID_SCREEN;
-			postViewSwitched(mLastScrollDirection);
+			post(new Runnable() {
+				@Override public void run() {
+					postViewSwitched(mLastScrollDirection);
+				}
+			});
 		}
 	}
 
