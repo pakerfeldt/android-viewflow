@@ -226,7 +226,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	public void setViewFlow(ViewFlow view) {
 		resetTimer();
 		viewFlow = view;
-		flowWidth = viewFlow.getWidth();
+		flowWidth = viewFlow.getChildWidth();
 		invalidate();
 	}
 
@@ -241,7 +241,7 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		setVisibility(View.VISIBLE);
 		resetTimer();
 		currentScroll = h;
-		flowWidth = viewFlow.getWidth();
+		flowWidth = viewFlow.getChildWidth();
 		invalidate();
 	}
 

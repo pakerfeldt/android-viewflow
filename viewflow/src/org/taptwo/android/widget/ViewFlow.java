@@ -198,7 +198,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		return getPaddingLeft() + getPaddingRight() + getHorizontalFadingEdgeLength() * 2;
 	}
 
-	private int getChildWidth() {
+	public int getChildWidth() {
 		return getWidth() - getWidthPadding();
 	}
 
@@ -206,7 +206,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		return getPaddingTop() + getPaddingBottom();
 	}
 
-	private int getChildHeight() {
+	public int getChildHeight() {
 		return getHeight() - getHeightPadding();
 	}
 
