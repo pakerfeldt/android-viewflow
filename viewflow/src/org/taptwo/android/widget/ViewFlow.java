@@ -296,7 +296,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 				} else if (deltaX > 0) {
 					final int availableToScroll = getChildAt(
 							getChildCount() - 1).getRight()
-							- scrollX - getChildWidth();
+							- getPaddingRight() - getHorizontalFadingEdgeLength()
+							- scrollX - getWidth();
 					if (availableToScroll > 0) {
 						scrollBy(Math.min(availableToScroll, deltaX), 0);
 					}
@@ -394,6 +395,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 				} else if (deltaX > 0) {
 					final int availableToScroll = getChildAt(
 							getChildCount() - 1).getRight()
+							- getPaddingRight() - getHorizontalFadingEdgeLength()
 							- scrollX - getChildWidth();
 					if (availableToScroll > 0) {
 						scrollBy(Math.min(availableToScroll, deltaX), 0);
