@@ -163,26 +163,38 @@ public class ViewFlow extends AdapterView<Adapter> {
 		final int heightPadding = getHeightPadding();
 
 		int count = mAdapter == null ? 0 : mAdapter.getCount();
-		if (count > 0 && (widthMode == MeasureSpec.UNSPECIFIED || widthMode == MeasureSpec.AT_MOST ||
-				heightMode == MeasureSpec.UNSPECIFIED)) {
+		if (count > 0) {
 			final View child = obtainView(0);
-
-			int childTargetWidthSpec = widthMeasureSpec;
-			if (widthMode == MeasureSpec.AT_MOST) {
-				int childTargetSize = widthSize - widthPadding;
-				childTargetWidthSpec = MeasureSpec.makeMeasureSpec(childTargetSize, MeasureSpec.AT_MOST);
-			}
-			child.measure(childTargetWidthSpec, heightMeasureSpec);
+			measureChild(child, widthMeasureSpec, heightMeasureSpec);
 			childWidth = child.getMeasuredWidth();
 			childHeight = child.getMeasuredHeight();
 			childState = child.getMeasuredState();
 			mRecycledViews.add(child);
 		}
-		if (widthMode == MeasureSpec.UNSPECIFIED) {
-			widthSize = childWidth + widthPadding;
-		} else if (widthMode == MeasureSpec.AT_MOST) {
-			widthSize = childWidth + widthPadding;
-			widthSize = resolveSizeAndState(widthSize, widthMeasureSpec, childState);
+
+		switch (widthMode) {
+			case MeasureSpec.UNSPECIFIED:
+				widthSize = childWidth + widthPadding;
+				break;
+			case MeasureSpec.AT_MOST:
+				widthSize = (childWidth + widthPadding) | childState;
+				break;
+			case MeasureSpec.EXACTLY:
+				if (widthSize < childWidth + widthPadding)
+					widthSize |= MEASURED_STATE_TOO_SMALL;
+				break;
+		}
+		switch (heightMode) {
+			case MeasureSpec.UNSPECIFIED:
+				heightSize = childHeight + heightPadding;
+				break;
+			case MeasureSpec.AT_MOST:
+				heightSize = (childHeight + heightPadding) | (childState >> MEASURED_HEIGHT_STATE_SHIFT);
+				break;
+			case MeasureSpec.EXACTLY:
+				if (heightSize < childHeight + heightPadding)
+					heightSize |= MEASURED_STATE_TOO_SMALL;
+				break;
 		}
 
 		if (heightMode == MeasureSpec.UNSPECIFIED) {
@@ -213,12 +225,15 @@ public class ViewFlow extends AdapterView<Adapter> {
 	@Override protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 
-		measureChildren(
-				MeasureSpec.makeMeasureSpec(w - getWidthPadding(), MeasureSpec.AT_MOST),
-				MeasureSpec.makeMeasureSpec(h - getHeightPadding(), MeasureSpec.AT_MOST));
+		final int count = getChildCount();
+		for (int i = 0; i < count ; ++i) {
+			final View child = getChildAt(i);
+			child.measure(MeasureSpec.makeMeasureSpec(getChildWidth(), MeasureSpec.EXACTLY),
+					MeasureSpec.makeMeasureSpec(getChildHeight(), MeasureSpec.EXACTLY));
+		}
 
 		if (mFirstLayout) {
-			mScroller.startScroll(0, 0, mCurrentScreen * w, 0, 0);
+			mScroller.startScroll(0, 0, mCurrentScreen * getChildWidth(), 0, 0);
 			mFirstLayout = false;
 		}
 	}
@@ -725,19 +740,16 @@ public class ViewFlow extends AdapterView<Adapter> {
 	}
 
 	@Override protected void measureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
-		final LayoutParams lp = child.getLayoutParams();
-		assert lp != null;
-		lp.height = getChildHeight();
-		lp.width = getChildWidth();
-		final int childWidthSpec = MeasureSpec.makeMeasureSpec(lp.width, MeasureSpec.EXACTLY);
-		final int childHeightSpec = MeasureSpec.makeMeasureSpec(lp.height, MeasureSpec.EXACTLY);
+		LayoutParams lp = child.getLayoutParams();
+		final int childWidthSpec = getChildMeasureSpec(parentWidthMeasureSpec, getWidthPadding(), lp.width);
+		final int childHeightSpec = getChildMeasureSpec(parentHeightMeasureSpec, getHeightPadding(), lp.height);
 		child.measure(childWidthSpec, childHeightSpec);
 	}
 
 	private View setupChild(View child, boolean addToEnd, boolean recycle) {
 		final LayoutParams lp = child.getLayoutParams();
-		assert lp != null;
-		measureChild(child, 0, 0);
+		child.measure(MeasureSpec.makeMeasureSpec(getChildWidth(), MeasureSpec.EXACTLY),
+				MeasureSpec.makeMeasureSpec(getChildHeight(), MeasureSpec.EXACTLY));
 		if (recycle)
 			attachViewToParent(child, (addToEnd ? -1 : 0), lp);
 		else
