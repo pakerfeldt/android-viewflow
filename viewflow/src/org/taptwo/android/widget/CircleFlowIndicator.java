@@ -31,27 +31,29 @@ import org.taptwo.android.widget.viewflow.R;
 /**
  * A FlowIndicator which draws circles (one for each view). 
  * <br/>
- * Availables attributes are:<br/>
+ * Available attributes are:<br/>
  * <ul>
+ * <li>
  * activeColor: Define the color used to draw the active circle (default to white)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * inactiveColor: Define the color used to draw the inactive circles (default to 0x44FFFFFF)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * inactiveType: Define how to draw the inactive circles, either stroke or fill (default to stroke)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * activeType: Define how to draw the active circle, either stroke or fill (default to fill)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * fadeOut: Define the time (in ms) until the indicator will fade out (default to 0 = never fade out)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * radius: Define the circle outer radius (default to 4.0)
- * </ul>
- *	* <ul>
+ * </li>
+ * <li>
  * spacing: Define the circle spacing (default to 4.0)
+ * </li>
  * </ul>
  */
 public class CircleFlowIndicator extends View implements FlowIndicator,
