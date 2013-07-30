@@ -254,6 +254,24 @@ public class ViewFlow extends AdapterView<Adapter> {
 		}
 	}
 
+	@Override protected float getTopFadingEdgeStrength() {
+		return 0.0f;
+	}
+
+	@Override protected float getBottomFadingEdgeStrength() {
+		return 0.0f;
+	}
+
+	@Override protected float getLeftFadingEdgeStrength() {
+		// always do the fading edge
+		return 1.0f;
+	}
+
+	@Override protected float getRightFadingEdgeStrength() {
+		// always do the fading edge
+		return 1.0f;
+	}
+
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		if (getChildCount() == 0)
