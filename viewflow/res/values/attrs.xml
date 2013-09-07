@@ -33,6 +33,7 @@
 			<flag name="stroke" value="0" />
 			<flag name="fill" value="1" />
 		</attr>
+		<attr name="snap" format="boolean" />
     </declare-styleable>    
     <declare-styleable name="TitleFlowIndicator">
         <attr name="titlePadding" format="dimension" />

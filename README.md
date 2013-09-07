@@ -66,8 +66,15 @@ And then you'll need to connect your `ViewFlow` with the `FlowIndicator`:
 
 	CircleFlowIndicator indic = (CircleFlowIndicator) findViewById(R.id.viewflowindic);
 	viewFlow.setFlowIndicator(indic);
-	
-The following attributes are supported: `activeColor`, `inactiveColor`, `activeType` (either fill or stroke), `inactiveType` (either fill or stroke), `fadeOut` (time in ms until indicator fades out, 0 = never), `radius`.
+
+By default, the 'active' indicator moves smoothly from one 'inactive' indicator
+to the next, as the user scrolls. If you set the `snap` attribute to `true`, it
+will instead jump to the next position when the flow settles at the next page.
+
+The following attributes are supported: `activeColor`, `inactiveColor`,
+`activeType` (either fill or stroke), `inactiveType` (either fill or stroke),
+`fadeOut` (time in ms until indicator fades out, 0 = never), `radius`, `sync`
+(see above).
 
 #### Title Flow Indicator ####
 This indicator presents the title of the previous, current and next `View` in the adapter (see screenshot below).

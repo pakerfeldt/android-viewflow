@@ -31,27 +31,32 @@ import org.taptwo.android.widget.viewflow.R;
 /**
  * A FlowIndicator which draws circles (one for each view). 
  * <br/>
- * Availables attributes are:<br/>
+ * Available attributes are:<br/>
  * <ul>
+ * <li>
  * activeColor: Define the color used to draw the active circle (default to white)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * inactiveColor: Define the color used to draw the inactive circles (default to 0x44FFFFFF)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * inactiveType: Define how to draw the inactive circles, either stroke or fill (default to stroke)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * activeType: Define how to draw the active circle, either stroke or fill (default to fill)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * fadeOut: Define the time (in ms) until the indicator will fade out (default to 0 = never fade out)
- * </ul>
- * <ul>
+ * </li>
+ * <li>
  * radius: Define the circle outer radius (default to 4.0)
- * </ul>
- *	* <ul>
+ * </li>
+ * <li>
  * spacing: Define the circle spacing (default to 4.0)
+ * </li>
+ * <li>
+ * snap: If true, the 'active' indicator snaps from one page to the next; otherwise, it moves smoothly.
+ * </li>
  * </ul>
  */
 public class CircleFlowIndicator extends View implements FlowIndicator,
@@ -68,11 +73,13 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	private final Paint mPaintActive = new Paint(Paint.ANTI_ALIAS_FLAG);
 	private ViewFlow viewFlow;
 	private int currentScroll = 0;
+	private int currentPosition = 0;
 	private int flowWidth = 0;
 	private FadeTimer timer;
 	public AnimationListener animationListener = this;
 	private Animation animation;
 	private boolean mCentered = false;
+	private boolean mSnap = false;
 
 	/**
 	 * Default constructor
@@ -131,6 +138,8 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 		fadeOutTime = a.getInt(R.styleable.CircleFlowIndicator_fadeOut, 0);
 		
 		mCentered = a.getBoolean(R.styleable.CircleFlowIndicator_centered, false);
+
+		mSnap = a.getBoolean(R.styleable.CircleFlowIndicator_snap, false);
 		
 		initColors(activeColor, inactiveColor, activeType, inactiveType);
 	}
@@ -195,11 +204,15 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 					getPaddingTop() + mRadius, mRadiusInactive, mPaintInactive);
 		}
 		float cx = 0;
-		if (flowWidth != 0) {
-			// Draw the filled circle according to the current scroll
-			cx = (currentScroll * spacing) / flowWidth;
+		if (mSnap) {
+			cx = currentPosition * spacing;
+		} else {
+			if (flowWidth != 0) {
+				// Draw the filled circle according to the current scroll
+				cx = (currentScroll * spacing) / flowWidth;
+			}
+			// else, the flow width hasn't been updated yet. Draw the default position.
 		}
-		// The flow width has been upadated yet. Draw the default position
 		canvas.drawCircle(leftPadding + mRadius + cx+centeringOffset, getPaddingTop()
 				+ mRadius, mRadiusActive, mPaintActive);
 	}
@@ -213,6 +226,12 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 */
 	@Override
 	public void onSwitched(View view, int position) {
+		currentPosition = position;
+		if (mSnap) {
+			setVisibility(View.VISIBLE);
+			resetTimer();
+			invalidate();
+		}
 	}
 
 	/*
@@ -238,11 +257,13 @@ public class CircleFlowIndicator extends View implements FlowIndicator,
 	 */
 	@Override
 	public void onScrolled(int h, int v, int oldh, int oldv) {
-		setVisibility(View.VISIBLE);
-		resetTimer();
 		currentScroll = h;
 		flowWidth = viewFlow.getChildWidth();
-		invalidate();
+		if (!mSnap) {
+			setVisibility(View.VISIBLE);
+			resetTimer();
+			invalidate();
+		}
 	}
 
 	/*
