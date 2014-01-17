@@ -164,7 +164,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 
 		int count = mAdapter == null ? 0 : mAdapter.getCount();
 		if (count > 0) {
-			final View child = obtainView(0);
+			//final View child = obtainView(0);
+			final View child = obtainView(mCurrentAdapterIndex);
 			measureChild(child, widthMeasureSpec, heightMeasureSpec);
 			childWidth = child.getMeasuredWidth();
 			childHeight = child.getMeasuredHeight();
