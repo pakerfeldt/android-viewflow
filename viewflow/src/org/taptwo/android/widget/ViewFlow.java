@@ -416,6 +416,8 @@ public class ViewFlow extends AdapterView<Adapter> {
 			}
 
 			if (mTouchState == TOUCH_STATE_SCROLLING) {
+				if(getParent() != null)
+					getParent().requestDisallowInterceptTouchEvent(true);
 				// Scroll to follow the motion event
 
 				mLastMotionX = x;
@@ -462,11 +464,14 @@ public class ViewFlow extends AdapterView<Adapter> {
 			}
 
 			mTouchState = TOUCH_STATE_REST;
-
+			if(getParent() != null)
+				getParent().requestDisallowInterceptTouchEvent(false);
 			break;
 		case MotionEvent.ACTION_CANCEL:
 			snapToDestination();
 			mTouchState = TOUCH_STATE_REST;
+			if(getParent() != null)
+				getParent().requestDisallowInterceptTouchEvent(false);
 		}
 		return true;
 	}
