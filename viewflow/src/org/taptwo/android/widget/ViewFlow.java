@@ -124,6 +124,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		TypedArray styledAttrs = context.obtainStyledAttributes(attrs,
 				R.styleable.ViewFlow);
 		mSideBuffer = styledAttrs.getInt(R.styleable.ViewFlow_sidebuffer, 3);
+		styledAttrs.recycle();
 		init();
 	}
 
@@ -788,7 +789,7 @@ public class ViewFlow extends AdapterView<Adapter> {
 		mLastObtainedViewWasRecycled = (view == convertView);
 		ViewGroup.LayoutParams p = view.getLayoutParams();
 		if (p == null) {
-			p = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			p = new LayoutParams(LayoutParams.MATCH_PARENT , LayoutParams.MATCH_PARENT );
 			view.setLayoutParams(p);
 		}
 		return view;
